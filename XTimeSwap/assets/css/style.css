@@ -1,0 +1,321 @@
+/*
+ *
+ * Template Name: Alissa
+ * Template URI: http://azmind.com
+ * Description: Alissa - Responsive Coming Soon Template
+ * Author: Anli Zaimi
+ * Author URI: http://azmind.com
+ *
+ */
+
+
+body {
+    background: #f8f8f8 url('../../../img/countdown/bg2.png');
+    background-repeat:no-repeat;
+    background-color: black;
+    background-attachment: fixed;
+    background-size: cover;
+    text-align: left;
+    font-family: 'Lato', Arial, sans-serif;
+    color: #555;
+    font-weight: 400;
+}
+/* .top{
+    height: 50px;
+} */
+
+/***** Coming Soon *****/
+.coming-soon.container.logo{
+    margin-top: 20px;
+}
+.coming-soon {
+    margin: 0 auto;
+    text-align: center;
+    color: #fff;
+}
+
+.coming-soon p {
+    font-size: 45px;
+    font-weight: 700;
+    text-shadow: 0 3px 14px rgba(0,0,0,.2);
+
+    margin-top: 20px;
+    line-height: 36px;
+    text-shadow: 0 1px 7px rgba(0,0,0,.2);
+}
+
+.timer {
+    margin-top: 0px;
+    text-shadow: 0 1px 5px rgba(0,0,0,.1);
+}
+
+.timer .days-wrapper,
+.timer .hours-wrapper,
+.timer .minutes-wrapper,
+.timer .seconds-wrapper {
+    display: inline-block;
+    width: 160px;
+    height: 160px;
+    margin: 0 10px;
+    padding-top: 20px;
+    background: #2d2d2d; /* browsers that don't support rgba */
+    background: rgba(45,45,45,.7);
+    font-size: 18px;
+    -moz-border-radius: 80px;
+    -webkit-border-radius: 80px;
+    border-radius: 80px;
+}
+
+.timer .days-wrapper:hover,
+.timer .hours-wrapper:hover,
+.timer .minutes-wrapper:hover,
+.timer .seconds-wrapper:hover {
+    background: #f3bc25 url(../img/pattern-2.png);
+    text-shadow: none;
+}
+
+.timer .days,
+.timer .hours,
+.timer .minutes,
+.timer .seconds {
+    font-size: 80px;
+    line-height: 90px;
+}
+
+
+
+
+/***** Media Queries *****/
+
+@media (min-width: 768px) and (max-width: 979px) {
+
+    .logo h1 {
+        padding-left: 0;
+    }
+
+    .call-us p {
+        padding-right: 0;
+    }
+
+    .timer .days-wrapper,
+    .timer .hours-wrapper,
+    .timer .minutes-wrapper,
+    .timer .seconds-wrapper {
+        width: 140px;
+        height: 140px;
+        margin: 0 7px;
+        padding-top: 20px;
+        -moz-border-radius: 70px;
+        -webkit-border-radius: 70px;
+        border-radius: 70px;
+    }
+
+    .timer .days,
+    .timer .hours,
+    .timer .minutes,
+    .timer .seconds {
+        font-size: 60px;
+        line-height: 70px;
+    }
+
+}
+
+@media (min-width:576px) and (max-width: 767px) {
+
+    body {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .logo h1 {
+        padding-left: 0;
+        text-align: center;
+    }
+
+    .call-us {
+        padding-bottom: 7px;
+        text-align: center;
+    }
+
+    .call-us p {
+        padding-right: 0;
+    }
+
+    .inner-bg {
+        padding: 0px 0 50px 0;
+    }
+
+    .coming-soon h2 {
+        font-size: 36px;
+        padding: 0 20px;
+    }
+
+    .coming-soon p {
+        font-size: 30px;
+        /* padding: 0 20px; */
+    }
+
+    .timer .days-wrapper,
+    .timer .hours-wrapper,
+    .timer .minutes-wrapper,
+    .timer .seconds-wrapper {
+        width: 140px;
+        height: 140px;
+        margin: 7px;
+        padding-top: 20px;
+        -moz-border-radius: 70px;
+        -webkit-border-radius: 70px;
+        border-radius: 70px;
+    }
+
+    .timer .days,
+    .timer .hours,
+    .timer .minutes,
+    .timer .seconds {
+        font-size: 60px;
+        line-height: 70px;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    body {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .logo h1 {
+        padding-left: 0;
+        text-align: center;
+    }
+
+    .call-us {
+        padding-bottom: 7px;
+        text-align: center;
+    }
+
+    .call-us p {
+        padding-right: 0;
+    }
+
+    .inner-bg {
+        padding: 0px 0 50px 0;
+    }
+
+    .coming-soon h2 {
+        font-size: 36px;
+        padding: 0 20px;
+    }
+
+    .coming-soon p {
+        padding: 0;
+        font-size: 25px;
+    }
+
+    /* .timer div:nth-child(2){
+        padding: 0;
+    } */
+    .timer .days-wrapper,
+    .timer .hours-wrapper,
+    .timer .minutes-wrapper,
+    .timer .seconds-wrapper {
+        width: 70px;
+        height: 70px;
+        font-size: 10px;
+        padding-top: 10px;
+        -moz-border-radius: 35px;
+        -webkit-border-radius: 35px;
+        border-radius: 35px;
+    }
+
+    .timer .days,
+    .timer .hours,
+    .timer .minutes,
+    .timer .seconds {
+        font-size: 30px;
+        line-height: 30px;
+    }
+    .finalday{
+        margin-top: 40px;
+    }
+    .showphoto img{
+        margin-top: 20px;
+    }
+    .button-3{
+        margin-top: 180px;
+    }
+
+}
+
+
+
+
+
+
+/*******************************/
+/********* General CSS *********/
+/*******************************/
+body {
+	color: #777777;
+	font-weight: 500;
+	font-family: 'Quicksand', sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: #4a4c70;
+}
+
+a {
+	color: #4a4c70;
+	transition: .3s;
+}
+
+a:hover,
+a:active,
+a:focus {
+	color: #FDBE33;
+	outline: none;
+	text-decoration: none;
+}
+
+.btn.btn-custom {
+	padding: 12px 20px;
+	text-align: center;
+	font-size: 18px;
+	font-weight: 500;
+	color: #ffffff;
+	border-radius: 0;
+	border: 2px solid #FDBE33;
+	box-shadow: inset 0 0 0 0 #FDBE33;
+	transition: ease-out 0.3s;
+	-webkit-transition: ease-out 0.3s;
+	-moz-transition: ease-out 0.3s;
+}
+
+.btn.btn-custom:hover {
+	color: #20212B;
+	box-shadow: inset 0 0 0 30px #FDBE33;
+}
+
+.btn:focus,
+.form-control:focus {
+	box-shadow: none;
+}
+
+.container-fluid {
+	max-width: 1366px;
+}
+
+[class^="flaticon-"]:before,
+[class*=" flaticon-"]:before,
+[class^="flaticon-"]:after,
+[class*=" flaticon-"]:after {
+	font-size: inherit;
+	margin-left: 0;
+}

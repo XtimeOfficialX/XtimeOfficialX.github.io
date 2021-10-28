@@ -1,0 +1,57 @@
+$flaticon-font: "flaticon";
+
+@font-face {
+    font-family: $flaticon-font;
+    src: url("./flaticon.ttf?b1bcb8b92b502388e025e127304c8bf7") format("truetype"),
+url("./flaticon.woff?b1bcb8b92b502388e025e127304c8bf7") format("woff"),
+url("./flaticon.woff2?b1bcb8b92b502388e025e127304c8bf7") format("woff2"),
+url("./flaticon.eot?b1bcb8b92b502388e025e127304c8bf7#iefix") format("embedded-opentype"),
+url("./flaticon.svg?b1bcb8b92b502388e025e127304c8bf7#flaticon") format("svg");
+}
+
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+$flaticon-map: (
+    "discount": "\f101",
+    "audit": "\f102",
+    "shield": "\f103",
+    "font": "\f104",
+    "font-1": "\f105",
+    "padlock-1": "\f106",
+    "fees": "\f107",
+    "read-more": "\f108",
+);
+
+.flaticon-discount:before {
+    content: map-get($flaticon-map, "discount");
+}
+.flaticon-audit:before {
+    content: map-get($flaticon-map, "audit");
+}
+.flaticon-shield:before {
+    content: map-get($flaticon-map, "shield");
+}
+.flaticon-font:before {
+    content: map-get($flaticon-map, "font");
+}
+.flaticon-font-1:before {
+    content: map-get($flaticon-map, "font-1");
+}
+.flaticon-padlock-1:before {
+    content: map-get($flaticon-map, "padlock-1");
+}
+.flaticon-fees:before {
+    content: map-get($flaticon-map, "fees");
+}
+.flaticon-read-more:before {
+    content: map-get($flaticon-map, "read-more");
+}
