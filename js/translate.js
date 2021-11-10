@@ -70,7 +70,7 @@ let zh_wawa = {
 	"K-Line": "K線圖",
 	"Road Map": "路線圖",
 	"We Now Here!": "現在在這！",
-	"Language: EN":"语言：繁體中文",
+	"Language: EN":"语言：繁体中文",
 	"#p1":"薩爾瓦多總統Nayib Bukele，給薩爾瓦多每個人一個擁有X的機會.",
 		"#p2":"未知，因此充滿激情。未知，因此擁有未來.",
 		"#p3":"這個機會希望可以通過XTime帶給全世界的所有人.",
@@ -113,7 +113,7 @@ let jap = {
 	"K-Line": "K線図",
 	"Road Map": "道路地図",
 	"We Now Here！": "今ここに！",
-	"Language: EN":"语言：日本語"
+	"Language: EN":"语言：日本语"
 }
 let elenodes = null;
 window.translate = function(i) {
