@@ -88,7 +88,7 @@ function bindBtnEvents() {
 	$("#input-swap-from").on("input", function () {
 		SWAP_FROM_VALUE = $(this).val();
 		SWAP_TO_VALUE = calculateSwapToNumber();
-		$("#input-swap-to").val(SWAP_TO_VALUE);
+		$("#input-swap-to").val(parseFloat(SWAP_TO_VALUE).toFixed(6));
 		checkSwapInputValue();
 	})
 
@@ -96,7 +96,7 @@ function bindBtnEvents() {
 	$("#input-swap-to").on("input", function () {
 		SWAP_TO_VALUE = $(this).val();
 		SWAP_FROM_VALUE = calculateSwapFromNumber();
-		$("#input-swap-from").val(SWAP_FROM_VALUE)
+		$("#input-swap-from").val(parseFloat(SWAP_FROM_VALUE).toFixed(6));
 		checkSwapInputValue();
 	})
 
@@ -281,14 +281,14 @@ function calculateLiquidityInfo(percent) {
 
 function showBalance() {
 	if (SWAP_WAY === 1) {
-		$("#label-balance-from").html(`Balance: ${BNB_BALANCE}`);
+		$("#label-balance-from").html(`Balance: ${parseFloat(BNB_BALANCE).toFixed(6)}`);
 		$("#label-balance-from").removeClass("hide");
-		$("#label-balance-to").html(`Balance: ${XTIME_BALANCE}`);
+		$("#label-balance-to").html(`Balance: ${parseFloat(XTIME_BALANCE).toFixed(6)}`);
 		$("#label-balance-to").removeClass("hide");
 	} else {
-		$("#label-balance-from").html(`Balance: ${XTIME_BALANCE}`);
+		$("#label-balance-from").html(`Balance: ${parseFloat(XTIME_BALANCE).toFixed(6)}`);
 		$("#label-balance-from").removeClass("hide");
-		$("#label-balance-to").html(`Balance: ${BNB_BALANCE}`);
+		$("#label-balance-to").html(`Balance: ${parseFloat(BNB_BALANCE).toFixed(6)}`);
 		$("#label-balance-to").removeClass("hide");
 	}
 
