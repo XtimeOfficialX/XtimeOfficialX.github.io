@@ -2,6 +2,8 @@ const XTIME_CONTRACT_ADDRESS = "0xFF2BF41EC57b897c914E2BAac857D621f4CB1691";
 const WBNB_CONTRACT_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
 const PAIR_CONTRACT_ADDRESS = "0xbaBd4F4FC5667F8cac87DC6499F3e8f38f13B57A";
 const ROUTER_CONTRACT_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
+const STAKE_CONTRACT_ADDRESS = "";
+let  STAKE_CONTRACT;
 let PAIR_CONTRACT;
 let ROUTER_CONTRACT;
 let XTIME_CONTRACT;
@@ -90,6 +92,30 @@ function getPairReserves() {
 			resolve(balance);
 		} catch (error) {
 			reject(error)
+		}
+	})
+}
+
+function getPairAllowance(owner, spender) {
+	return new Promise( async function (resolve, reject) {
+		try {
+			let allowance = PAIR_CONTRACT.methods.allowance(owner, spender).call();
+			resolve(allowance);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function enablePairTokenAllowance(spender) {
+	return new Promise( async function (resolve, reject) {
+		try {
+			let max = new web3.utils.BN("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+
+			let allowance = PAIR_CONTRACT.methods.approve(spender, web3.utils.toWei(max.toString())).call();
+			resolve(allowance);
+		} catch (error) {
+			reject(error);
 		}
 	})
 }

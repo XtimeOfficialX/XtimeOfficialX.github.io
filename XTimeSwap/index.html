@@ -212,7 +212,9 @@
 										<div class="liquidity-label">Share of pool</div>
 										<p id="liquidity-balance-sharing">Loading</p>
 									</div>
-									<button class="btn btn-lg btn-primary swap-wallet" id="btn-remove-liquidity">Remove</button>
+									<button class="btn btn-lg btn-primary swap-wallet" id="btn-remove-liquidity">
+										Remove
+									</button>
 								</div>
 							</div>
 							<div>
@@ -308,7 +310,9 @@
 								</div>
 							</div>
 
-							<button class="btn btn-lg btn-primary swap-wallet" id="btn-confirm-remove-liquidity" disabled>Remove</button>
+							<button class="btn btn-lg btn-primary swap-wallet" id="btn-confirm-remove-liquidity"
+									disabled>Remove
+							</button>
 						</div>
 					</div>
 				</div>
@@ -355,7 +359,9 @@
 										<p class="stake-staked-label">XTime-BNB Staked</p>
 										<p id="stake-staked-result">0</p>
 									</div>
-									<button class="btn btn-primary btn-sm">Enable</button>
+									<button class="btn btn-primary btn-sm hide" id="btn-enable-stake">Enable</button>
+									<button class="btn btn-primary btn-sm" id="btn-reduce-stake">-</button>
+									<button class="btn btn-primary btn-sm" id="btn-increase-stake">+</button>
 								</div>
 							</div>
 						</div>
@@ -422,6 +428,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="modal" id="history" data-backdrop="static" data-keyboard="false" tabindex="-1"
 			 aria-labelledby="staticBackdropLabel" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered">
@@ -434,6 +441,41 @@
 					</div>
 					<div class="modal-body">
 						No recent transactions
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal" id="change-stake" data-backdrop="static" data-keyboard="false" tabindex="-1"
+			 aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="change-stake-title">Change Stake</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="swap-input">
+							<p class="input-label">Stake</p>
+							<p class="input-label float-right hide" id="balance-change-stake">Balance: 0.165578</p>
+							<div class="input-body">
+								<input class="token-amount-input" inputmode="decimal"
+									   autocorrect="off" type="number" pattern="^[0-9]*[.,]?[0-9]*$"
+									   placeholder="0.0" minlength="1" maxlength="79" id="input-change-stake">
+							</div>
+							<div class="form-item change-stake-buttons">
+								<button class="btn-percent" id="change-stake-btn-percent-25">25%</button>
+								<button class="btn-percent" id="change-stake-btn-percent-50">50%</button>
+								<button class="btn-percent" id="change-stake-btn-percent-75">75%</button>
+								<button class="btn-percent" id="change-stake-btn-percent-100">100%</button>
+							</div>
+
+							<div style="padding: 30px 15px 30px 15px">
+								<button class="btn btn-lg btn-primary" disabled id="confirm-change-stake">Confirm</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

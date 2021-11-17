@@ -12,6 +12,10 @@ let CURRENT_ADDRESS;
 let POLL_AMOUNT_XTIME = 0;
 let POLL_AMOUNT_BNB = 0;
 let REMOVE_LIQUIDITY_PERCENT = 0;
+let PAIR_TOKEN_ALLOWANCE = 0;
+let STAKE_BALANCE = 0;
+let STAKE_CHANGE_WAY = 1; // 1: increase; 2: reduce
+let STAKE_CHANGE_VALUE = 0;
 
 function bindBtnEvents() {
 	$("#btn-swap").click(function () {
@@ -215,6 +219,51 @@ function bindBtnEvents() {
 			showSuccessInfo("Remove Success!", "You transaction is on the way");
 		})
 	})
+
+	// enable stake
+	$("#btn-enable-stake").click(function () {
+		enablePairTokenAllowance(STAKE_CONTRACT_ADDRESS).then(() => {
+
+		})
+	});
+
+	// reduce stake
+	$("#btn-increase-stake").click(function () {
+		$("#change-stake-title").html("Stake XTime-BNB")
+		$("#change-stake").modal('toggle')
+	});
+
+	// increase stake
+	$("#btn-reduce-stake").click(function () {
+		$("#change-stake-title").html("Unstake XTime-BNB")
+		$("#change-stake").modal('toggle')
+	});
+
+	// percent input
+	$("#change-stake-btn-percent-25").click(function () {
+		let value = calculateStakeValue(0.25);
+		$("#input-change-stake").val(value);
+	})
+
+	$("#change-stake-btn-percent-50").click(function () {
+		let value = calculateStakeValue(0.5);
+		$("#input-change-stake").val(value);
+	})
+
+	$("#change-stake-btn-percent-75").click(function () {
+		let value = calculateStakeValue(0.75);
+		$("#input-change-stake").val(value);
+	})
+
+	$("#change-stake-btn-percent-100").click(function () {
+		let value = calculateStakeValue(1);
+		$("#input-change-stake").val(value);
+	})
+
+	$("#input-change-stake").on("input", function () {
+		STAKE_CHANGE_VALUE = $(this).val();
+		checkStakeInputValue(STAKE_CHANGE_VALUE);
+	})
 }
 
 function connectedWallet(web3) {
@@ -366,6 +415,36 @@ function hidePageShowSwap() {
 	if ($(".swap-container").hasClass("hide")) {
 		$(".index-container").addClass("hide");
 		$(".swap-container").removeClass("hide");
+	}
+}
+
+function showStakeButtons() {
+	if (PAIR_TOKEN_ALLOWANCE > 0) {
+		$("#btn-enable-stake").addClass("hide");
+		$("#btn-increase-stake").removeClass("hide");
+		$("#btn-reduce-stake").removeClass("hide");
+	} else {
+		$("#btn-enable-stake").removeClass("hide");
+		$("#btn-increase-stake").addClass("hide");
+		$("#btn-reduce-stake").addClass("hide");
+	}
+}
+
+function calculateStakeValue(percent) {
+	if (STAKE_CHANGE_WAY === 1) {
+		STAKE_CHANGE_VALUE = LIQUIDITY_BALANCE * percent;
+	} else {
+		STAKE_CHANGE_VALUE = STAKE_BALANCE * percent;
+	}
+}
+
+function checkStakeInputValue(value) {
+	if (STAKE_CHANGE_WAY === 1 && value < LIQUIDITY_BALANCE) {
+		$("#confirm-change-stake").attr("disabled", false);
+	} else if(STAKE_CHANGE_WAY === 2 && value < STAKE_BALANCE) {
+		$("#confirm-change-stake").attr("disabled", false);
+	} else {
+		$("#confirm-change-stake").attr("disabled", true);
 	}
 }
 
