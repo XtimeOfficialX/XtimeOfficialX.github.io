@@ -11,9 +11,32 @@ function intervalChangeBackground() {
 	}, 7000);
 }
 
-function showAlert(title, body) {
-	$("#info-failed-title").html(title);
-	$("#info-failed-body").html(body);
+/*
+	Countdown initializer
+*/
+function initCountdownElements() {
+	var now = new Date();
+	var finaldate = new Date("NOV 20 2021 14:00 UTC ");
+	var countTo = finaldate.getTime() - now.getTime() + now.valueOf();
+	$(".timer").countdown(countTo, function (event) {
+		var $this = $(this);
+		switch (event.type) {
+		case "seconds":
+		case "minutes":
+		case "hours":
+		case "days":
+		case "weeks":
+		case "daysLeft":
+			$this.find('span.' + event.type).html(event.value);
+			break;
+		case "finished":
+			$this.hide();
+			break;
+		}
+	});
+}
+
+function showAlert() {
 	$("#alert").removeClass("hide");
 	setTimeout(function () {
 		$("#alert").addClass("hide")

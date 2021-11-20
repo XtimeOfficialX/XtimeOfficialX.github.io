@@ -105,9 +105,9 @@ a:focus {
 }
 
 .coming-soon {
-    text-align: center;
+	margin: 0 auto;
+	text-align: center;
 	color: #fff;
-    margin: 0 auto 50px;
 }
 
 .coming-soon p {
@@ -489,7 +489,7 @@ input[type="number"] {
 	width: 7px;
 }
 
-.stake-wrapper::-webkit-scrollbar-thumb {
+.stake-wrapper::-webkit-scrollbar-thumb{
 	background: rgb(28, 162, 231);
 	border-radius: 7px;
 }
@@ -599,7 +599,7 @@ input[type="number"] {
 
 #stake-earned-result {
 	margin: 0;
-	font-size: 18px;
+	font-size: 14px;
 	color: rgb(29, 162, 231);
 }
 
@@ -610,8 +610,7 @@ input[type="number"] {
 
 #stake-staked-result {
 	margin: 0;
-	font-size: 20px;
-    color: rgb(29, 162, 231);
+	font-size: 14px;
 }
 
 .stake-staked-label {
@@ -648,7 +647,6 @@ input[type="number"] {
 	padding: 0 16px;
 	color: white;
 }
-
 @media (min-width: 992px) {
 	.form-item .btn-percent {
 		padding: 0 24px;
@@ -687,21 +685,6 @@ input[type="number"] {
 
 .form-item .input-percent:focus:not(:disabled) {
 	box-shadow: rgb(118 69 217) 0px 0px 0px 1px, rgb(118 69 217 / 60%) 0px 0px 0px 4px;
-}
-
-#btn-reduce-stake,
-#btn-increase-stake {
-	width: 31px;
-}
-
-.change-stake-buttons {
-	display: flex;
-	justify-content: space-around;
-	margin-top: 20px;
-}
-
-#confirm-change-stake {
-	width: 100%;
 }
 
 /***** Media Queries *****/

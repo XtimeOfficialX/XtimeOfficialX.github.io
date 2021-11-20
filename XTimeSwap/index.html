@@ -30,13 +30,12 @@
 <body>
 
 <div class="alert alert-warning alert-dismissible fade show hide" role="alert" id="alert">
-    <strong id="info-failed-title">Need MetaMask!</strong>
-    <span id="info-failed-body">You should install the metamask wallet</span>
+	<strong>Need MetaMask!</strong> You should install the metamask wallet
 </div>
 
 <div class="alert alert-success alert-dismissible fade show hide" role="alert" id="success-info">
-	<strong id="info-success-title">Swap Success!</strong>
-    <span id="info-success-body">You transaction is on the way</span>
+	<strong id="info-success-title">Swap Success!</strong><span
+		id="info-success-body">You transaction is on the way</span>
 </div>
 
 <div id="app">
@@ -46,6 +45,29 @@
 			<div class="container-fluid">
 				<div class="row">
 					<img src="../img/countdown/top.jpg" class="col-md-8 offset-md-2 col-12">
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-12" style="text-align: center; align-items: center;">
+						<p style="margin-top: 20px;">XTIME STAKE IS COMING</p>
+					</div>
+				</div>
+
+				<div class="timer row">
+					<div class="days-wrapper m-auto">
+						<span class="days"></span> <br>days
+					</div>
+					<div class="hours-wrapper  m-auto ">
+						<span class="hours"></span> <br>hours
+					</div>
+					<div class="minutes-wrapper m-auto ">
+						<span class="minutes"></span> <br>minutes
+					</div>
+					<div class="seconds-wrapper m-auto ">
+						<span class="seconds"></span> <br>seconds
+					</div>
+				</div>
+				<div class="final-day">
+					<p>14:00 November 20 2021 UTC</p>
 				</div>
 			</div>
 		</div>
@@ -190,9 +212,7 @@
 										<div class="liquidity-label">Share of pool</div>
 										<p id="liquidity-balance-sharing">Loading</p>
 									</div>
-									<button class="btn btn-lg btn-primary swap-wallet" id="btn-remove-liquidity">
-										Remove
-									</button>
+									<button class="btn btn-lg btn-primary swap-wallet" id="btn-remove-liquidity">Remove</button>
 								</div>
 							</div>
 							<div>
@@ -288,9 +308,7 @@
 								</div>
 							</div>
 
-							<button class="btn btn-lg btn-primary swap-wallet" id="btn-confirm-remove-liquidity"
-									disabled>Remove
-							</button>
+							<button class="btn btn-lg btn-primary swap-wallet" id="btn-confirm-remove-liquidity" disabled>Remove</button>
 						</div>
 					</div>
 				</div>
@@ -307,13 +325,17 @@
 									<p class="detail-item-title color-white">XTime-BNB</p>
 									<p class="detail-item-info color-blue">Earn BTC</p>
 								</div>
-<!--								<div class="stake-detail-item">-->
-<!--									<p class="detail-item-title color-white">APR</p>-->
-<!--									<p class="detail-item-info color-white">Loading...</p>-->
-<!--								</div>-->
+								<div class="stake-detail-item">
+									<p class="detail-item-title color-white">BTC Earned</p>
+									<p class="detail-item-info color-blue">Loading...</p>
+								</div>
+								<div class="stake-detail-item">
+									<p class="detail-item-title color-white">APR</p>
+									<p class="detail-item-info color-white">Loading...</p>
+								</div>
 								<div class="stake-detail-item">
 									<p class="detail-item-title color-white">Total Staked</p>
-									<p class="detail-item-info color-white" id="stake-total">Loading...</p>
+									<p class="detail-item-info color-white">Loading...</p>
 								</div>
 								<div class="stake-detail-item detail-btn">
 									Details
@@ -322,47 +344,47 @@
 							<div class="stake-detail-info">
 								<div class="stake-detail-info-item">
 									<div>
-										<p class="stake-earned-label">BTC Earned:</p>
+										<p class="stake-earned-label">XTime Earned:</p>
 										<p id="stake-earned-result">0</p>
-<!--										<p id="stake-earned-money">0.00~ USD</p>-->
+										<p id="stake-earned-money">0.00~ USD</p>
 									</div>
-									<button class="btn btn-primary btn-sm" id="confirm-harvest">Harvest</button>
+									<button class="btn btn-primary btn-sm">Harvest</button>
 								</div>
 								<div class="stake-detail-info-item">
 									<div>
 										<p class="stake-staked-label">XTime-BNB Staked</p>
 										<p id="stake-staked-result">0</p>
 									</div>
-                                    <div>
-                                        <button class="btn btn-primary btn-sm" id="btn-enable-stake">Enable</button>
-                                        <button class="btn btn-primary btn-sm" id="btn-reduce-stake">-</button>
-                                        <button class="btn btn-primary btn-sm" id="btn-increase-stake">+</button>
-                                    </div>
+									<button class="btn btn-primary btn-sm">Enable</button>
 								</div>
 							</div>
 						</div>
-<!--						<div class="stake-container">-->
-<!--							<div class="stake-detail">-->
-<!--								<div class="stake-detail-item">-->
-<!--									<img class="coin-icon" src="assets/icon/xtime.png">-->
-<!--								</div>-->
-<!--								<div class="stake-detail-item">-->
-<!--									<p class="detail-item-title color-white">XTime</p>-->
-<!--									<p class="detail-item-info color-blue">Earn BTC</p>-->
-<!--								</div>-->
-<!--								<div class="stake-detail-item">-->
-<!--									<p class="detail-item-title color-white">APR</p>-->
-<!--									<p class="detail-item-info color-white">Coming soon</p>-->
-<!--								</div>-->
-<!--								<div class="stake-detail-item">-->
-<!--									<p class="detail-item-title color-white">Total Staked</p>-->
-<!--									<p class="detail-item-info color-white">Coming soon</p>-->
-<!--								</div>-->
-<!--								<div class="stake-detail-item detail-btn">-->
-<!--									Details-->
-<!--								</div>-->
-<!--							</div>-->
-<!--						</div>-->
+						<div class="stake-container">
+							<div class="stake-detail">
+								<div class="stake-detail-item">
+									<img class="coin-icon" src="assets/icon/xtime.png">
+								</div>
+								<div class="stake-detail-item">
+									<p class="detail-item-title color-white">XTime</p>
+									<p class="detail-item-info color-blue">Earn BTC</p>
+								</div>
+								<div class="stake-detail-item">
+									<p class="detail-item-title color-white">BTC Earned</p>
+									<p class="detail-item-info color-blue">Loading...</p>
+								</div>
+								<div class="stake-detail-item">
+									<p class="detail-item-title color-white">APR</p>
+									<p class="detail-item-info color-white">Loading...</p>
+								</div>
+								<div class="stake-detail-item">
+									<p class="detail-item-title color-white">Total Staked</p>
+									<p class="detail-item-info color-white">Loading...</p>
+								</div>
+								<div class="stake-detail-item detail-btn">
+									Details
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -400,7 +422,6 @@
 				</div>
 			</div>
 		</div>
-
 		<div class="modal" id="history" data-backdrop="static" data-keyboard="false" tabindex="-1"
 			 aria-labelledby="staticBackdropLabel" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered">
@@ -417,41 +438,6 @@
 				</div>
 			</div>
 		</div>
-
-		<div class="modal" id="change-stake" data-backdrop="static" data-keyboard="false" tabindex="-1"
-			 aria-labelledby="staticBackdropLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="change-stake-title">Change Stake</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<div class="swap-input">
-							<p class="input-label">Stake</p>
-							<p class="input-label float-right hide" id="balance-change-stake">Balance: 0.165578</p>
-							<div class="input-body">
-								<input class="token-amount-input" inputmode="decimal"
-									   autocorrect="off" type="number" pattern="^[0-9]*[.,]?[0-9]*$"
-									   placeholder="0.0" minlength="1" maxlength="79" id="input-change-stake">
-							</div>
-							<div class="form-item change-stake-buttons">
-								<button class="btn-percent" id="change-stake-btn-percent-25">25%</button>
-								<button class="btn-percent" id="change-stake-btn-percent-50">50%</button>
-								<button class="btn-percent" id="change-stake-btn-percent-75">75%</button>
-								<button class="btn-percent" id="change-stake-btn-percent-100">100%</button>
-							</div>
-
-							<div style="padding: 30px 15px 30px 15px">
-								<button class="btn btn-lg btn-primary" disabled id="confirm-change-stake">Confirm</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
 	</div>
 	<!-- Javascript -->
 	<!--<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>-->
@@ -464,7 +450,6 @@
 	<script src="src/abi/Router.js"></script>
 	<script src="src/abi/XTime.js"></script>
 	<script src="src/abi/WBNB.js"></script>
-    <script src="src/abi/Stake.js"></script>
 	<script src="src/js/init.js"></script>
 	<script src="src/js/wallet.js"></script>
 	<script src="src/js/swap.js"></script>
