@@ -2,8 +2,6 @@ const XTIME_CONTRACT_ADDRESS = "0xFF2BF41EC57b897c914E2BAac857D621f4CB1691";
 const WBNB_CONTRACT_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
 const PAIR_CONTRACT_ADDRESS = "0xbaBd4F4FC5667F8cac87DC6499F3e8f38f13B57A";
 const ROUTER_CONTRACT_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
-const STAKE_CONTRACT_ADDRESS = "0xF8f10A45379E70103B2E54090Aa7aAe83F575B01";
-let STAKE_CONTRACT;
 let PAIR_CONTRACT;
 let ROUTER_CONTRACT;
 let XTIME_CONTRACT;
@@ -21,27 +19,8 @@ function connectWallet() {
 				reject(error);
 			}
 		} else {
-			showAlert("Need MetaMask!", "You should install the metamask wallet");
+			showAlert();
 		}
-	})
-}
-
-function addChain() {
-	return web3.currentProvider.request({
-		"method": "wallet_addEthereumChain",
-		"params": [
-			{
-				chainId: "0x38",
-				chainName: "Binance Smart Chain Mainnet",
-				nativeCurrency: {
-					name: "",
-					symbol: "bnb",
-					decimals: 18,
-				},
-				rpcUrls: ["https://bsc-dataseed1.ninicoin.io"],
-				blockExplorerUrls: ["https://bscscan.com/"]
-			}
-		],
 	})
 }
 
@@ -120,7 +99,6 @@ function initContract() {
 	ROUTER_CONTRACT = new web3.eth.Contract(RouterABI, ROUTER_CONTRACT_ADDRESS);
 	XTIME_CONTRACT = new web3.eth.Contract(XTimeABI, XTIME_CONTRACT_ADDRESS);
 	WBNB_CONTRACT = new web3.eth.Contract(WBNBABI, WBNB_CONTRACT_ADDRESS);
-	STAKE_CONTRACT = new web3.eth.Contract(STAKE_ABI, STAKE_CONTRACT_ADDRESS);
 }
 
 function getXTimeToWBNBPrice() {
@@ -343,129 +321,11 @@ async function removeLiquidity() {
 				method: 'eth_sendTransaction',
 				params: [rawRemoveLiquidity],
 			});
-		console.log("remove tx:", txSwapHash);
+		console.log("remove tx:",txSwapHash);
 	} catch (error) {
 		return {
 			success: false,
 			status: "😥 Something went wrong: " + error.message
 		}
 	}
-}
-
-function getStakePendingReward(address) {
-	return new Promise(async function (resolve, reject) {
-		try {
-			let info = STAKE_CONTRACT.methods.pendingReward(address).call();
-			resolve(info);
-		} catch (error) {
-			reject(error);
-		}
-	})
-}
-
-function getStakeTotal() {
-	return new Promise(async function (resolve, reject) {
-		try {
-			let balance = PAIR_CONTRACT.methods.balanceOf(STAKE_CONTRACT_ADDRESS).call()
-			resolve(balance);
-		} catch (error) {
-			reject(error)
-		}
-	})
-}
-
-function getStakeUserInfo(address){
-	return new Promise(async function (resolve, reject) {
-		try {
-			let info = STAKE_CONTRACT.methods.userInfo(address).call();
-			resolve(info);
-		} catch (error) {
-			reject(error);
-		}
-	})
-}
-
-function getPairAllowance(owner, spender) {
-	return new Promise(async function (resolve, reject) {
-		try {
-			let allowance = PAIR_CONTRACT.methods.allowance(owner, spender).call();
-			resolve(allowance);
-		} catch (error) {
-			reject(error);
-		}
-	})
-}
-
-function enablePairTokenAllowance(spender) {
-	return new Promise(async function (resolve, reject) {
-		try {
-			let allowance = PAIR_CONTRACT.methods.approve(spender, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-
-			let rawApproveTransaction = {
-				"from": CURRENT_ADDRESS,
-				"to": PAIR_CONTRACT_ADDRESS,
-				"value": web3.utils.toHex(0),
-				"data": allowance.encodeABI()
-			};
-
-			const txApproveHash = await window.ethereum
-				.request({
-					method: 'eth_sendTransaction',
-					params: [rawApproveTransaction],
-				});
-			resolve(txApproveHash);
-		} catch (error) {
-			reject(error);
-		}
-	})
-}
-
-async function depositStake(value) {
-	let amount = web3.utils.toWei(value);
-	let deposit = STAKE_CONTRACT.methods.deposit(amount);
-
-	let rawTransaction = {
-		"from": CURRENT_ADDRESS,
-		"to": STAKE_CONTRACT_ADDRESS,
-		"value": web3.utils.toHex(0),
-		"data": deposit.encodeABI()
-	};
-
-	return new Promise(async function (resolve, reject) {
-		try {
-			const txAHash = await window.ethereum
-				.request({
-					method: 'eth_sendTransaction',
-					params: [rawTransaction],
-				});
-			resolve(txAHash);
-		} catch (error) {
-			reject(error);
-		}
-	})
-}
-
-async function withdrawStake(value) {
-	let amount = web3.utils.toWei(value);
-	let withdraw = STAKE_CONTRACT.methods.withdraw(amount);
-
-	let rawTransaction = {
-		"from": CURRENT_ADDRESS,
-		"to": STAKE_CONTRACT_ADDRESS,
-		"value": web3.utils.toHex(0),
-		"data": withdraw.encodeABI()
-	};
-
-	return new Promise(async function (resolve, reject) {
-		try {
-			const txHash = await window.ethereum
-				.request({
-					method: 'eth_sendTransaction',
-					params: [rawTransaction],
-				});
-			resolve(txHash);
-		} catch (error) {
-			reject(error);
-		}
-	})
 }
