@@ -4,7 +4,7 @@ let SLIPPAGE = 20;
 let SWAP_FROM_VALUE = 0;
 let SWAP_TO_VALUE = 0;
 let BNB_BALANCE = 0;
-let LIQUIDITY_BALANCE = 0;
+let LIQUIDITY_BALANCE = "0";
 let LIQUIDITY_TOTAL = 0;
 let PAIR_RESERVES;
 let XTIME_BALANCE = 0;
@@ -12,6 +12,10 @@ let CURRENT_ADDRESS;
 let POLL_AMOUNT_XTIME = 0;
 let POLL_AMOUNT_BNB = 0;
 let REMOVE_LIQUIDITY_PERCENT = 0;
+let PAIR_TOKEN_ALLOWANCE = 0;
+let STAKE_BALANCE = "0";
+let STAKE_CHANGE_WAY = 1; // 1: increase; 2: reduce
+let STAKE_CHANGE_VALUE = 0;
 
 function bindBtnEvents() {
 	$("#btn-swap").click(function () {
@@ -215,12 +219,105 @@ function bindBtnEvents() {
 			showSuccessInfo("Remove Success!", "You transaction is on the way");
 		})
 	})
+
+	// enable stake
+	$("#btn-enable-stake").click(function () {
+		enablePairTokenAllowance(STAKE_CONTRACT_ADDRESS).then(() => {
+			getPairAllowance(CURRENT_ADDRESS, STAKE_CONTRACT_ADDRESS).then((result) => {
+				console.log(result);
+			})
+		}).catch((error) => {
+			console.log(error);
+		})
+	});
+
+	// reduce stake
+	$("#btn-increase-stake").click(function () {
+		STAKE_CHANGE_WAY = 1;
+		$("#change-stake-title").html("Stake XTime-BNB");
+		$("#balance-change-stake").html(LIQUIDITY_BALANCE);
+		$("#change-stake").modal('toggle');
+	});
+
+	// increase stake
+	$("#btn-reduce-stake").click(function () {
+		STAKE_CHANGE_WAY = 2;
+		$("#change-stake-title").html("Unstake XTime-BNB");
+		$("#balance-change-stake").html(STAKE_BALANCE);
+		$("#change-stake").modal('toggle')
+	});
+
+	// percent input
+	$("#change-stake-btn-percent-25").click(function () {
+		STAKE_CHANGE_VALUE = calculateStakeValue(0.25);
+		$("#input-change-stake").val(STAKE_CHANGE_VALUE);
+		checkStakeInputValue(STAKE_CHANGE_VALUE);
+	})
+
+	$("#change-stake-btn-percent-50").click(function () {
+		STAKE_CHANGE_VALUE = calculateStakeValue(0.5);
+		$("#input-change-stake").val(STAKE_CHANGE_VALUE);
+		checkStakeInputValue(STAKE_CHANGE_VALUE);
+	})
+
+	$("#change-stake-btn-percent-75").click(function () {
+		STAKE_CHANGE_VALUE = calculateStakeValue(0.75);
+		$("#input-change-stake").val(STAKE_CHANGE_VALUE);
+		checkStakeInputValue(STAKE_CHANGE_VALUE);
+	})
+
+	$("#change-stake-btn-percent-100").click(function () {
+		STAKE_CHANGE_VALUE = calculateStakeValue(1);
+		$("#input-change-stake").val(STAKE_CHANGE_VALUE);
+		checkStakeInputValue(STAKE_CHANGE_VALUE);
+	})
+
+	$("#input-change-stake").on("input", function () {
+		STAKE_CHANGE_VALUE = $(this).val();
+		checkStakeInputValue(STAKE_CHANGE_VALUE);
+	})
+
+	// confirm change stake
+	$("#confirm-change-stake").click(function () {
+		if (STAKE_CHANGE_WAY === 1) {
+			depositStake(STAKE_CHANGE_VALUE.toString()).then((result) => {
+				console.log(result);
+				showSuccessInfo("Deposit Success!", "You transaction is on the way");
+				$("#change-stake").modal('toggle');
+			}).catch((error) => {
+				console.log(error);
+				showAlert("Deposit Failed!", error.message)
+			})
+		} else {
+			withdrawStake(STAKE_CHANGE_VALUE.toString()).then((result) => {
+				console.log(result);
+				showSuccessInfo("Withdraw Success!", "You transaction is on the way");
+				$("#change-stake").modal('toggle');
+			}).catch((error) => {
+				console.log(error);
+				showAlert("Withdraw Failed!", error.message)
+			})
+		}
+	})
+
+	// confirm harvest
+	$("#confirm-harvest").click(function () {
+		depositStake("0").then((result) => {
+			console.log(result);
+			showSuccessInfo("Harvest Success!", "You transaction is on the way");
+		}).catch((error) => {
+			console.log(error);
+			showAlert("Harvest Failed!", error.message)
+		})
+	})
 }
 
 function connectedWallet(web3) {
 	window.web3 = web3;
 	if (web3.currentProvider.chainId !== "0x38") {
-		switchChain();
+		addChain().then(() => {
+			switchChain();
+		});
 	}
 	initContract();
 	CURRENT_ADDRESS = getCurrentAddress();
@@ -241,6 +338,27 @@ function connectedWallet(web3) {
 			Web3.utils.fromWei(result[2].reserve1),
 		];
 		showLiquidityInfo();
+	})
+
+	getPairAllowance(CURRENT_ADDRESS, STAKE_CONTRACT_ADDRESS).then((result) => {
+		PAIR_TOKEN_ALLOWANCE = new web3.utils.BN(result);
+		showStakeButtons();
+	});
+
+	getStakeUserInfo(CURRENT_ADDRESS).then((result) => {
+		STAKE_BALANCE = web3.utils.fromWei(result.amount);
+		showStakeBalance(STAKE_BALANCE);
+	});
+
+	getStakeTotal().then((result) => {
+		let total = web3.utils.fromWei(result);
+
+		$("#stake-total").html(parseFloat(total).toFixed(6));
+	});
+
+	getStakePendingReward(CURRENT_ADDRESS).then((result) => {
+		let pending_reward = web3.utils.fromWei(result);
+		$("#stake-earned-result").html(parseFloat(pending_reward).toFixed(10));
 	})
 
 	getXTimeToWBNBPrice();
@@ -366,6 +484,47 @@ function hidePageShowSwap() {
 	if ($(".swap-container").hasClass("hide")) {
 		$(".index-container").addClass("hide");
 		$(".swap-container").removeClass("hide");
+	}
+}
+
+function showStakeButtons() {
+	if (PAIR_TOKEN_ALLOWANCE.gt(new web3.utils.BN("0"))) {
+		$("#btn-enable-stake").addClass("hide");
+		$("#btn-increase-stake").removeClass("hide");
+		$("#btn-reduce-stake").removeClass("hide");
+	} else {
+		$("#btn-enable-stake").removeClass("hide");
+		$("#btn-increase-stake").addClass("hide");
+		$("#btn-reduce-stake").addClass("hide");
+	}
+}
+
+function showStakeBalance(value) {
+	$("#stake-staked-result").html(parseFloat(value).toFixed(6))
+}
+
+function calculateStakeValue(percent) {
+	let result;
+
+	if (STAKE_CHANGE_WAY === 1) {
+		result = LIQUIDITY_BALANCE * percent;
+	} else {
+		result = STAKE_BALANCE * percent;
+	}
+	return result;
+}
+
+function checkStakeInputValue(value) {
+	let wei_value = new web3.utils.BN(web3.utils.toWei(value.toString()));
+	let wei_liquidity_balance = new web3.utils.BN(web3.utils.toWei(LIQUIDITY_BALANCE));
+	let wei_stake_balance = new web3.utils.BN(web3.utils.toWei(STAKE_BALANCE));
+
+	if (STAKE_CHANGE_WAY === 1 && wei_value.lte(wei_liquidity_balance)) {
+		$("#confirm-change-stake").attr("disabled", false);
+	} else if(STAKE_CHANGE_WAY === 2 && wei_value.lte(wei_stake_balance)) {
+		$("#confirm-change-stake").attr("disabled", false);
+	} else {
+		$("#confirm-change-stake").attr("disabled", true);
 	}
 }
 
