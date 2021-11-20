@@ -599,7 +599,7 @@ input[type="number"] {
 
 #stake-earned-result {
 	margin: 0;
-	font-size: 14px;
+	font-size: 18px;
 	color: rgb(29, 162, 231);
 }
 
@@ -610,7 +610,8 @@ input[type="number"] {
 
 #stake-staked-result {
 	margin: 0;
-	font-size: 14px;
+	font-size: 20px;
+    color: rgb(29, 162, 231);
 }
 
 .stake-staked-label {

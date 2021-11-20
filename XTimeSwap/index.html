@@ -330,16 +330,12 @@
 									<p class="detail-item-info color-blue">Earn BTC</p>
 								</div>
 								<div class="stake-detail-item">
-									<p class="detail-item-title color-white">BTC Earned</p>
-									<p class="detail-item-info color-blue">Loading...</p>
-								</div>
-								<div class="stake-detail-item">
 									<p class="detail-item-title color-white">APR</p>
 									<p class="detail-item-info color-white">Loading...</p>
 								</div>
 								<div class="stake-detail-item">
 									<p class="detail-item-title color-white">Total Staked</p>
-									<p class="detail-item-info color-white">Loading...</p>
+									<p class="detail-item-info color-white" id="stake-total">Loading...</p>
 								</div>
 								<div class="stake-detail-item detail-btn">
 									Details
@@ -348,20 +344,22 @@
 							<div class="stake-detail-info">
 								<div class="stake-detail-info-item">
 									<div>
-										<p class="stake-earned-label">XTime Earned:</p>
+										<p class="stake-earned-label">BTC Earned:</p>
 										<p id="stake-earned-result">0</p>
-										<p id="stake-earned-money">0.00~ USD</p>
+<!--										<p id="stake-earned-money">0.00~ USD</p>-->
 									</div>
-									<button class="btn btn-primary btn-sm">Harvest</button>
+									<button class="btn btn-primary btn-sm" id="confirm-harvest">Harvest</button>
 								</div>
 								<div class="stake-detail-info-item">
 									<div>
 										<p class="stake-staked-label">XTime-BNB Staked</p>
 										<p id="stake-staked-result">0</p>
 									</div>
-									<button class="btn btn-primary btn-sm hide" id="btn-enable-stake">Enable</button>
-									<button class="btn btn-primary btn-sm" id="btn-reduce-stake">-</button>
-									<button class="btn btn-primary btn-sm" id="btn-increase-stake">+</button>
+                                    <div>
+                                        <button class="btn btn-primary btn-sm" id="btn-enable-stake">Enable</button>
+                                        <button class="btn btn-primary btn-sm" id="btn-reduce-stake">-</button>
+                                        <button class="btn btn-primary btn-sm" id="btn-increase-stake">+</button>
+                                    </div>
 								</div>
 							</div>
 						</div>
@@ -373,10 +371,6 @@
 								<div class="stake-detail-item">
 									<p class="detail-item-title color-white">XTime</p>
 									<p class="detail-item-info color-blue">Earn BTC</p>
-								</div>
-								<div class="stake-detail-item">
-									<p class="detail-item-title color-white">BTC Earned</p>
-									<p class="detail-item-info color-blue">Loading...</p>
 								</div>
 								<div class="stake-detail-item">
 									<p class="detail-item-title color-white">APR</p>
@@ -492,6 +486,7 @@
 	<script src="src/abi/Router.js"></script>
 	<script src="src/abi/XTime.js"></script>
 	<script src="src/abi/WBNB.js"></script>
+    <script src="src/abi/Stake.js"></script>
 	<script src="src/js/init.js"></script>
 	<script src="src/js/wallet.js"></script>
 	<script src="src/js/swap.js"></script>
