@@ -286,6 +286,7 @@ function bindBtnEvents() {
 				$("#change-stake").modal('toggle');
 			}).catch((error) => {
 				console.log(error);
+				showAlert("Deposit Failed!", error.message)
 			})
 		} else {
 			withdrawStake(STAKE_CHANGE_VALUE.toString()).then((result) => {
@@ -294,6 +295,7 @@ function bindBtnEvents() {
 				$("#change-stake").modal('toggle');
 			}).catch((error) => {
 				console.log(error);
+				showAlert("Withdraw Failed!", error.message)
 			})
 		}
 	})
@@ -305,6 +307,7 @@ function bindBtnEvents() {
 			showSuccessInfo("Harvest Success!", "You transaction is on the way");
 		}).catch((error) => {
 			console.log(error);
+			showAlert("Harvest Failed!", error.message)
 		})
 	})
 }

@@ -105,9 +105,9 @@ a:focus {
 }
 
 .coming-soon {
-	margin: 0 auto;
-	text-align: center;
+    text-align: center;
 	color: #fff;
+    margin: 0 auto 50px;
 }
 
 .coming-soon p {

@@ -21,7 +21,7 @@ function connectWallet() {
 				reject(error);
 			}
 		} else {
-			showAlert();
+			showAlert("Need MetaMask!", "You should install the metamask wallet");
 		}
 	})
 }
