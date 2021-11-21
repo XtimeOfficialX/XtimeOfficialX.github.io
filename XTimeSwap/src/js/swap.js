@@ -70,6 +70,7 @@ function bindBtnEvents() {
 	// confirm supply Liquidity
 	$("#btn-poll-confirm-supply").click(function () {
 		addLiquidity().then(() => {
+			$("#btn-poll-add-back").click();
 			showSuccessInfo("Supply Success!", "You transaction is on the way");
 		}).catch((error) => {
 			showAlert("Supply Failed!", error.message)
@@ -79,6 +80,7 @@ function bindBtnEvents() {
 	// confirm remove liquidity
 	$("#btn-confirm-remove-liquidity").click(function () {
 		removeLiquidity().then(() => {
+			$("#btn-poll-remove-back").click();
 			showSuccessInfo("Remove Success!", "You transaction is on the way");
 		}).catch((error) => {
 			showAlert("Remove Failed!", error.message)
@@ -387,7 +389,9 @@ function connectedWallet(web3) {
 	getStakePendingReward(CURRENT_ADDRESS).then((result) => {
 		let pending_reward = web3.utils.fromWei(result);
 		$("#stake-earned-result").html(parseFloat(pending_reward).toFixed(10));
-	})
+	});
+
+	listenEvent();
 
 	getXTimeToWBNBPrice();
 	setInterval(getXTimeToWBNBPrice, 5000)
