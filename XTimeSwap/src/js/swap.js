@@ -13,6 +13,7 @@ let POLL_AMOUNT_XTIME = 0;
 let POLL_AMOUNT_BNB = 0;
 let REMOVE_LIQUIDITY_PERCENT = 0;
 let PAIR_TOKEN_ALLOWANCE = 0;
+let STAKE_TOTAL = "0";
 let STAKE_BALANCE = "0";
 let STAKE_CHANGE_WAY = 1; // 1: increase; 2: reduce
 let STAKE_CHANGE_VALUE = 0;
@@ -360,14 +361,24 @@ function connectedWallet(web3) {
 	})
 
 	// get liquidity balance
-	Promise.all([getLiquidityTotalSupply(), getLiquidityBalance(CURRENT_ADDRESS), getPairReserves()]).then(result => {
+	Promise.all([
+		getLiquidityTotalSupply(),
+		getLiquidityBalance(CURRENT_ADDRESS),
+		getPairReserves(),
+		getStakeTotal()
+	]).then(result => {
 		LIQUIDITY_TOTAL = Web3.utils.fromWei(result[0]);
 		LIQUIDITY_BALANCE = Web3.utils.fromWei(result[1]);
 		PAIR_RESERVES = [
 			Web3.utils.fromWei(result[2].reserve0),
 			Web3.utils.fromWei(result[2].reserve1),
 		];
+
 		showLiquidityInfo();
+
+		STAKE_TOTAL = web3.utils.fromWei(result[3]);
+
+		$("#stake-total").html(STAKE_TOTAL / LIQUIDITY_TOTAL * PAIR_RESERVES[0]);
 	})
 
 	getPairAllowance(CURRENT_ADDRESS, STAKE_CONTRACT_ADDRESS).then((result) => {
@@ -378,12 +389,6 @@ function connectedWallet(web3) {
 	getStakeUserInfo(CURRENT_ADDRESS).then((result) => {
 		STAKE_BALANCE = web3.utils.fromWei(result.amount);
 		showStakeBalance(STAKE_BALANCE);
-	});
-
-	getStakeTotal().then((result) => {
-		let total = web3.utils.fromWei(result);
-
-		$("#stake-total").html(parseFloat(total).toFixed(6));
 	});
 
 	getStakePendingReward(CURRENT_ADDRESS).then((result) => {
@@ -397,6 +402,8 @@ function connectedWallet(web3) {
 	setInterval(getXTimeToWBNBPrice, 5000)
 	connectWalletSuccess()
 }
+
+
 
 function showLiquidityInfo() {
 	if (LIQUIDITY_BALANCE > 0) {
