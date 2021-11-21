@@ -1,6 +1,6 @@
 let SWAP_WAY = 1; // 1: from bnb to xtime; 2: from xtime to bnb
 let DEADLINE_TIME = 20 * 60;
-let SLIPPAGE = 20;
+let SLIPPAGE = 50;
 let SWAP_FROM_VALUE = 0;
 let SWAP_TO_VALUE = 0;
 let BNB_BALANCE = 0;
@@ -40,6 +40,156 @@ function bindBtnEvents() {
 		$("#stake-window").removeClass("hide");
 	});
 
+	handleConnectWalletEvent();
+
+	handleSwapInputEvent();
+
+	handleLiquidityEvent();
+
+	handleStakeInputEvent();
+
+	// confirm swap
+	$("#btn-confirm-swap").click(function () {
+		if (SWAP_WAY === 1) {
+			swapBNBToXTime().then(() => {
+				showSuccessInfo("Swap Success!", "You transaction is on the way");
+			}).catch((error) => {
+				console.log(error);
+				showAlert("Swap Failed!", error.message)
+			});
+		} else {
+			swapXTimeToBNB().then(() => {
+				showSuccessInfo("Swap Success!", "You transaction is on the way");
+			}).catch((error) => {
+				console.log(error);
+				showAlert("Swap Failed!", error.message)
+			})
+		}
+	});
+
+	// confirm supply Liquidity
+	$("#btn-poll-confirm-supply").click(function () {
+		addLiquidity().then(() => {
+			showSuccessInfo("Supply Success!", "You transaction is on the way");
+		}).catch((error) => {
+			showAlert("Supply Failed!", error.message)
+		})
+	});
+
+	// confirm remove liquidity
+	$("#btn-confirm-remove-liquidity").click(function () {
+		removeLiquidity().then(() => {
+			showSuccessInfo("Remove Success!", "You transaction is on the way");
+		}).catch((error) => {
+			showAlert("Remove Failed!", error.message)
+		})
+	})
+
+	// enable stake
+	$("#btn-enable-stake").click(function () {
+		enablePairTokenAllowance(STAKE_CONTRACT_ADDRESS).then(() => {
+			getPairAllowance(CURRENT_ADDRESS, STAKE_CONTRACT_ADDRESS).then((result) => {
+				console.log(result);
+			})
+		}).catch((error) => {
+			console.log(error);
+		})
+	});
+
+	// confirm change stake
+	$("#confirm-change-stake").click(function () {
+		if (STAKE_CHANGE_WAY === 1) {
+			depositStake(STAKE_CHANGE_VALUE.toString()).then((result) => {
+				console.log(result);
+				showSuccessInfo("Deposit Success!", "You transaction is on the way");
+				$("#change-stake").modal('toggle');
+			}).catch((error) => {
+				console.log(error);
+				showAlert("Deposit Failed!", error.message)
+			})
+		} else {
+			withdrawStake(STAKE_CHANGE_VALUE.toString()).then((result) => {
+				console.log(result);
+				showSuccessInfo("Withdraw Success!", "You transaction is on the way");
+				$("#change-stake").modal('toggle');
+			}).catch((error) => {
+				console.log(error);
+				showAlert("Withdraw Failed!", error.message)
+			})
+		}
+	})
+
+	// confirm harvest
+	$("#confirm-harvest").click(function () {
+		depositStake("0").then((result) => {
+			console.log(result);
+			showSuccessInfo("Harvest Success!", "You transaction is on the way");
+		}).catch((error) => {
+			console.log(error);
+			showAlert("Harvest Failed!", error.message)
+		})
+	})
+}
+
+function handleConnectWalletEvent() {
+	// swap connect wallet
+	$("#btn-connect-wallet").click(function () {
+		connectWallet().then(connectedWallet).catch(error => {
+			console.log(error);
+			showAlert("Connect Wallet Failed!", error.message);
+		})
+	});
+
+	// poll connect wallet
+	$("#btn-poll-connect-wallet").click(function () {
+		connectWallet().then(connectedWallet).catch(error => {
+			console.log(error);
+			showAlert("Connect Wallet Failed!", error.message);
+		})
+	});
+}
+
+function handleSwapInputEvent() {
+	// exchange swap coin from to
+	$("#btn-exchange").click(function () {
+		switch (SWAP_WAY) {
+			case 1:
+				$("#btn-swap-from").html(`<img class="token-icon" src="assets/icon/xtime.png">XTime`);
+				$("#btn-swap-to").html(`<img class=\"token-icon\" src=\"assets/icon/bnb.png\">BNB`);
+				SWAP_WAY = 2;
+				break;
+			case 2:
+				$("#btn-swap-from").html(`<img class=\"token-icon\" src=\"assets/icon/bnb.png\">BNB`);
+				$("#btn-swap-to").html(`<img class="token-icon" src="assets/icon/xtime.png">XTime`);
+				SWAP_WAY = 1;
+				break;
+		}
+
+		$("#input-swap-from").val(SWAP_TO_VALUE);
+		$("#input-swap-to").val(SWAP_FROM_VALUE);
+
+		SWAP_TO_VALUE = $("#input-swap-to").val();
+		SWAP_FROM_VALUE = $("#input-swap-from").val();
+		showBalance();
+	})
+
+	// change the swap from value
+	$("#input-swap-from").on("input", function () {
+		SWAP_FROM_VALUE = $(this).val();
+		SWAP_TO_VALUE = calculateSwapToNumber();
+		$("#input-swap-to").val(parseFloat(SWAP_TO_VALUE).toFixed(6));
+		checkSwapInputValue();
+	})
+
+	$("#input-swap-to").on("input", function () {
+		SWAP_TO_VALUE = $(this).val();
+		SWAP_FROM_VALUE = calculateSwapFromNumber();
+		$("#input-swap-from").val(parseFloat(SWAP_FROM_VALUE).toFixed(6));
+		checkSwapInputValue();
+	})
+}
+
+function handleLiquidityEvent() {
 	// add Liquidity
 	$("#btn-join-poll").click(function () {
 		$("#window-body-poll-liquidity").addClass("hide")
@@ -52,65 +202,10 @@ function bindBtnEvents() {
 		$("#window-body-poll-add").addClass("hide")
 	})
 
-	// exchange swap coin from to
-	$("#btn-exchange").click(function () {
-		switch (SWAP_WAY) {
-		case 1:
-			$("#btn-swap-from").html(`<img class="token-icon" src="assets/icon/xtime.png">XTime`);
-			$("#btn-swap-to").html(`<img class=\"token-icon\" src=\"assets/icon/bnb.png\">BNB`);
-			SWAP_WAY = 2;
-			break;
-		case 2:
-			$("#btn-swap-from").html(`<img class=\"token-icon\" src=\"assets/icon/bnb.png\">BNB`);
-			$("#btn-swap-to").html(`<img class="token-icon" src="assets/icon/xtime.png">XTime`);
-			SWAP_WAY = 1;
-			break;
-		}
-
-		$("#input-swap-from").val(SWAP_TO_VALUE);
-		$("#input-swap-to").val(SWAP_FROM_VALUE);
-
-		SWAP_TO_VALUE = $("#input-swap-to").val();
-		SWAP_FROM_VALUE = $("#input-swap-from").val();
-		showBalance();
-	})
-
-	// connect wallet
-	$("#btn-connect-wallet").click(function () {
-		connectWallet().then(connectedWallet).catch(error => {
-			console.log(error);
-		})
-	});
-
-	$("#btn-poll-connect-wallet").click(function () {
-		connectWallet().then(connectedWallet).catch(error => {
-			console.log(error);
-		})
-	});
-
-	// change the swap from value
-	$("#input-swap-from").on("input", function () {
-		SWAP_FROM_VALUE = $(this).val();
-		SWAP_TO_VALUE = calculateSwapToNumber();
-		$("#input-swap-to").val(parseFloat(SWAP_TO_VALUE).toFixed(6));
-		checkSwapInputValue();
-	})
-
-
-	$("#input-swap-to").on("input", function () {
-		SWAP_TO_VALUE = $(this).val();
-		SWAP_FROM_VALUE = calculateSwapFromNumber();
-		$("#input-swap-from").val(parseFloat(SWAP_FROM_VALUE).toFixed(6));
-		checkSwapInputValue();
-	})
-
-	$(".stake-container").on("click", "div.detail-btn", function (e) {
-		let parent = $($(this).parents(".stake-container")[0]);
-		if (parent.hasClass("open")) {
-			parent.removeClass("open")
-		} else {
-			parent.addClass("open")
-		}
+	// remove liquidity
+	$("#btn-remove-liquidity").click(function () {
+		$("#window-body-poll-liquidity").addClass("hide");
+		$("#window-body-poll-remove").removeClass("hide");
 	})
 
 	// change the poll value
@@ -124,32 +219,6 @@ function bindBtnEvents() {
 		POLL_AMOUNT_XTIME = $(this).val();
 		calculatePollBNBNumber();
 		checkPollInputValue();
-	})
-
-	// confirm swap
-	$("#btn-confirm-swap").click(function () {
-		if (SWAP_WAY === 1) {
-			swapBNBToXTime().then(() => {
-				showSuccessInfo("Swap Success!", "You transaction is on the way");
-			});
-		} else {
-			swapXTimeToBNB().then(() => {
-				showSuccessInfo("Swap Success!", "You transaction is on the way");
-			})
-		}
-	});
-
-	// confirm supply Liquidity
-	$("#btn-poll-confirm-supply").click(function () {
-		addLiquidity().then(() => {
-			showSuccessInfo("Supply Success!", "You transaction is on the way");
-		})
-	});
-
-	// remove liquidity
-	$("#btn-remove-liquidity").click(function () {
-		$("#window-body-poll-liquidity").addClass("hide");
-		$("#window-body-poll-remove").removeClass("hide");
 	})
 
 	$("#btn-poll-remove-back").click(function () {
@@ -190,46 +259,39 @@ function bindBtnEvents() {
 		}
 
 		switch (Number(REMOVE_LIQUIDITY_PERCENT)) {
-		case 25:
-			$(".btn-percent").removeClass("active");
-			$("#remove-liquidity-btn-percent-25").addClass("active");
-			break;
-		case 50:
-			$(".btn-percent").removeClass("active");
-			$("#remove-liquidity-btn-percent-50").addClass("active");
-			break;
-		case 75:
-			$(".btn-percent").removeClass("active");
-			$("#remove-liquidity-btn-percent-75").addClass("active");
-			break;
-		case 100:
-			$(".btn-percent").removeClass("active");
-			$("#remove-liquidity-btn-percent-100").addClass("active");
-			break;
-		default:
-			$(".btn-percent").removeClass("active");
+			case 25:
+				$(".btn-percent").removeClass("active");
+				$("#remove-liquidity-btn-percent-25").addClass("active");
+				break;
+			case 50:
+				$(".btn-percent").removeClass("active");
+				$("#remove-liquidity-btn-percent-50").addClass("active");
+				break;
+			case 75:
+				$(".btn-percent").removeClass("active");
+				$("#remove-liquidity-btn-percent-75").addClass("active");
+				break;
+			case 100:
+				$(".btn-percent").removeClass("active");
+				$("#remove-liquidity-btn-percent-100").addClass("active");
+				break;
+			default:
+				$(".btn-percent").removeClass("active");
 		}
 
 		showLiquidityPay();
 	})
+}
 
-	// confirm remove liquidity
-	$("#btn-confirm-remove-liquidity").click(function () {
-		removeLiquidity().then(() => {
-			showSuccessInfo("Remove Success!", "You transaction is on the way");
-		})
+function handleStakeInputEvent() {
+	$(".stake-container").on("click", "div.detail-btn", function (e) {
+		let parent = $($(this).parents(".stake-container")[0]);
+		if (parent.hasClass("open")) {
+			parent.removeClass("open")
+		} else {
+			parent.addClass("open")
+		}
 	})
-
-	// enable stake
-	$("#btn-enable-stake").click(function () {
-		enablePairTokenAllowance(STAKE_CONTRACT_ADDRESS).then(() => {
-			getPairAllowance(CURRENT_ADDRESS, STAKE_CONTRACT_ADDRESS).then((result) => {
-				console.log(result);
-			})
-		}).catch((error) => {
-			console.log(error);
-		})
-	});
 
 	// reduce stake
 	$("#btn-increase-stake").click(function () {
@@ -275,40 +337,6 @@ function bindBtnEvents() {
 	$("#input-change-stake").on("input", function () {
 		STAKE_CHANGE_VALUE = $(this).val();
 		checkStakeInputValue(STAKE_CHANGE_VALUE);
-	})
-
-	// confirm change stake
-	$("#confirm-change-stake").click(function () {
-		if (STAKE_CHANGE_WAY === 1) {
-			depositStake(STAKE_CHANGE_VALUE.toString()).then((result) => {
-				console.log(result);
-				showSuccessInfo("Deposit Success!", "You transaction is on the way");
-				$("#change-stake").modal('toggle');
-			}).catch((error) => {
-				console.log(error);
-				showAlert("Deposit Failed!", error.message)
-			})
-		} else {
-			withdrawStake(STAKE_CHANGE_VALUE.toString()).then((result) => {
-				console.log(result);
-				showSuccessInfo("Withdraw Success!", "You transaction is on the way");
-				$("#change-stake").modal('toggle');
-			}).catch((error) => {
-				console.log(error);
-				showAlert("Withdraw Failed!", error.message)
-			})
-		}
-	})
-
-	// confirm harvest
-	$("#confirm-harvest").click(function () {
-		depositStake("0").then((result) => {
-			console.log(result);
-			showSuccessInfo("Harvest Success!", "You transaction is on the way");
-		}).catch((error) => {
-			console.log(error);
-			showAlert("Harvest Failed!", error.message)
-		})
 	})
 }
 
@@ -566,20 +594,20 @@ function settingPercentChange() {
 		$(".btn-percent").removeClass("active");
 		$(this).addClass("active");
 		$("#input-percent").val(10);
-		SLIPPAGE = 0.1;
+		SLIPPAGE = 10;
 	})
 
 	$("#btn-percent-15").click(function () {
 		$(".btn-percent").removeClass("active");
 		$(this).addClass("active");
 		$("#input-percent").val(15);
-		SLIPPAGE = 0.15;
+		SLIPPAGE = 15;
 	})
 
 	$("#btn-percent-25").click(function () {
 		$(".btn-percent").removeClass("active");
 		$(this).addClass("active");
 		$("#input-percent").val(25);
-		SLIPPAGE = 0.25;
+		SLIPPAGE = 25;
 	})
 }
