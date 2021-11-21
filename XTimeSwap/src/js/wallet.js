@@ -3,6 +3,7 @@ const WBNB_CONTRACT_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
 const PAIR_CONTRACT_ADDRESS = "0xbaBd4F4FC5667F8cac87DC6499F3e8f38f13B57A";
 const ROUTER_CONTRACT_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
 const STAKE_CONTRACT_ADDRESS = "0xF8f10A45379E70103B2E54090Aa7aAe83F575B01";
+
 let STAKE_CONTRACT;
 let PAIR_CONTRACT;
 let ROUTER_CONTRACT;
@@ -124,6 +125,25 @@ function initContract() {
 	STAKE_CONTRACT = new web3.eth.Contract(STAKE_ABI, STAKE_CONTRACT_ADDRESS);
 }
 
+function listenEvent() {
+	XTIME_CONTRACT.events.Approval(
+		{}, function (error, event) {
+			console.log(event);
+		})
+		.on("connected", function (subscriptionId) {
+			console.log(subscriptionId);
+		})
+		.on('data', function (event) {
+			console.log(event); // same results as the optional callback above
+		})
+		.on('changed', function (event) {
+			// remove event from local database
+		})
+		.on('error', function (error, receipt) { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+			console.log(error);
+		});
+}
+
 function getXTimeToWBNBPrice() {
 	const oneWBNB = Web3.utils.toWei("1");
 	ROUTER_CONTRACT.methods.getAmountsOut(oneWBNB, [WBNB_CONTRACT_ADDRESS, XTIME_CONTRACT_ADDRESS]).call().then(result => XTIME_PRICE = Web3.utils.fromWei(result[1]));
@@ -154,7 +174,7 @@ async function swapBNBToXTime() {
 		"data": data.encodeABI()
 	};
 
-	return new Promise(async function(resolve, reject) {
+	return new Promise(async function (resolve, reject) {
 		try {
 			const txHash = await window.ethereum
 				.request({
@@ -273,7 +293,7 @@ async function addLiquidity() {
 
 	console.log(Web3.utils.toWei(POLL_AMOUNT_BNB.toString()));
 
-	return new Promise( async (resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 		try {
 			const txApproveHash = await window.ethereum
 				.request({
@@ -283,7 +303,6 @@ async function addLiquidity() {
 			console.log(txApproveHash);
 
 			let approvalLimit = await XTIME_CONTRACT.methods.allowance(CURRENT_ADDRESS, ROUTER_CONTRACT_ADDRESS).call();
-
 			console.log(approvalLimit);
 
 			const txSupplyHash = await window.ethereum
@@ -301,14 +320,15 @@ async function addLiquidity() {
 }
 
 async function removeLiquidity() {
-	let removeLiquidity = web3.utils.toWei((LIQUIDITY_BALANCE * REMOVE_LIQUIDITY_PERCENT / 100).toFixed(17).toString())
+	let liquidity_bn = new web3.utils.BN(web3.utils.toWei(LIQUIDITY_BALANCE));
+	let removeLiquidity = liquidity_bn.mul(Web3.utils.toBN(REMOVE_LIQUIDITY_PERCENT)).div(Web3.utils.toBN(100));
 
 	let approveResponse = PAIR_CONTRACT.methods.approve(
 		ROUTER_CONTRACT_ADDRESS,
 		UINT_MAX
 	);
 
-	console.log(removeLiquidity);
+	console.log(removeLiquidity.toString());
 
 	let rawApproveTransaction = {
 		"from": CURRENT_ADDRESS,
@@ -317,14 +337,24 @@ async function removeLiquidity() {
 		"data": approveResponse.encodeABI()
 	};
 
-	let removeLiquidityResponse = ROUTER_CONTRACT.methods.removeLiquidityETHSupportingFeeOnTransferTokens(
+	// let removeLiquidityResponse = ROUTER_CONTRACT.methods.removeLiquidityETHSupportingFeeOnTransferTokens(
+	// 	XTIME_CONTRACT_ADDRESS,
+	// 	removeLiquidity.toString(),
+	// 	web3.utils.toHex(0),
+	// 	web3.utils.toHex(0),
+	// 	CURRENT_ADDRESS,
+	// 	Math.round(Date.now() / 1000) + DEADLINE_TIME,
+	// );
+
+	let removeLiquidityResponse = ROUTER_CONTRACT.methods.removeLiquidity (
+		WBNB_CONTRACT_ADDRESS,
 		XTIME_CONTRACT_ADDRESS,
-		removeLiquidity,
+		removeLiquidity.toString(),
 		web3.utils.toHex(0),
 		web3.utils.toHex(0),
 		CURRENT_ADDRESS,
 		Math.round(Date.now() / 1000) + DEADLINE_TIME,
-	)
+	);
 
 	let rawRemoveLiquidity = {
 		"from": CURRENT_ADDRESS,
@@ -382,7 +412,7 @@ function getStakeTotal() {
 	})
 }
 
-function getStakeUserInfo(address){
+function getStakeUserInfo(address) {
 	return new Promise(async function (resolve, reject) {
 		try {
 			let info = STAKE_CONTRACT.methods.userInfo(address).call();
