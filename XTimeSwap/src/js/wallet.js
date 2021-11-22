@@ -3,8 +3,10 @@ const WBNB_CONTRACT_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
 const PAIR_CONTRACT_ADDRESS = "0xbaBd4F4FC5667F8cac87DC6499F3e8f38f13B57A";
 const ROUTER_CONTRACT_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
 const STAKE_CONTRACT_ADDRESS = "0xF8f10A45379E70103B2E54090Aa7aAe83F575B01";
+const STAKE_XTIME_CONTRACT_ADDRESS = "0x002D4C9667f517Ac27f0F32579152D7C87108CCf";
 
 let STAKE_CONTRACT;
+let STAKE_XTIME_CONTRACT;
 let PAIR_CONTRACT;
 let ROUTER_CONTRACT;
 let XTIME_CONTRACT;
@@ -123,6 +125,7 @@ function initContract() {
 	XTIME_CONTRACT = new web3.eth.Contract(XTimeABI, XTIME_CONTRACT_ADDRESS);
 	WBNB_CONTRACT = new web3.eth.Contract(WBNBABI, WBNB_CONTRACT_ADDRESS);
 	STAKE_CONTRACT = new web3.eth.Contract(STAKE_ABI, STAKE_CONTRACT_ADDRESS);
+	STAKE_XTIME_CONTRACT = new web3.eth.Contract(STAKE_XTIME_ABI, STAKE_XTIME_CONTRACT_ADDRESS);
 }
 
 function listenEvent() {
@@ -437,7 +440,7 @@ function getPairAllowance(owner, spender) {
 function enablePairTokenAllowance(spender) {
 	return new Promise(async function (resolve, reject) {
 		try {
-			let allowance = PAIR_CONTRACT.methods.approve(spender, "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+			let allowance = PAIR_CONTRACT.methods.approve(spender, UINT_MAX);
 
 			let rawApproveTransaction = {
 				"from": CURRENT_ADDRESS,
@@ -458,7 +461,7 @@ function enablePairTokenAllowance(spender) {
 	})
 }
 
-async function depositStake(value) {
+function depositStake(value) {
 	let amount = web3.utils.toWei(value);
 	let deposit = STAKE_CONTRACT.methods.deposit(amount);
 
@@ -483,7 +486,7 @@ async function depositStake(value) {
 	})
 }
 
-async function withdrawStake(value) {
+function withdrawStake(value) {
 	let amount = web3.utils.toWei(value);
 	let withdraw = STAKE_CONTRACT.methods.withdraw(amount);
 
@@ -507,3 +510,123 @@ async function withdrawStake(value) {
 		}
 	})
 }
+
+// stake xtime
+function getXTimeStakeAllowance(owner, spender) {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let allowance = XTIME_CONTRACT.methods.allowance(owner, spender).call();
+			resolve(allowance);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function enableXTimeStake(spender) {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let allowance = XTIME_CONTRACT.methods.approve(spender, UINT_MAX);
+
+			let rawApproveTransaction = {
+				"from": CURRENT_ADDRESS,
+				"to": XTIME_CONTRACT_ADDRESS,
+				"value": web3.utils.toHex(0),
+				"data": allowance.encodeABI()
+			};
+
+			const txApproveHash = await window.ethereum
+				.request({
+					method: 'eth_sendTransaction',
+					params: [rawApproveTransaction],
+				});
+			resolve(txApproveHash);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function getXTimeStakePendingReward(address) {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let info = STAKE_XTIME_CONTRACT.methods.pendingReward(address).call();
+			resolve(info);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function getXTimeStakeTotal() {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let balance = XTIME_CONTRACT.methods.balanceOf(STAKE_XTIME_CONTRACT_ADDRESS).call()
+			resolve(balance);
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
+
+function getXTimeSTakeUserInfo(address) {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let info = STAKE_XTIME_CONTRACT.methods.userInfo(address).call();
+			resolve(info);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function depositXTimeStake(value) {
+	let amount = web3.utils.toWei(value);
+	let deposit = STAKE_XTIME_CONTRACT.methods.deposit(amount);
+
+	let rawTransaction = {
+		"from": CURRENT_ADDRESS,
+		"to": STAKE_XTIME_CONTRACT_ADDRESS,
+		"value": web3.utils.toHex(0),
+		"data": deposit.encodeABI()
+	};
+
+	return new Promise(async function (resolve, reject) {
+		try {
+			const txAHash = await window.ethereum
+				.request({
+					method: 'eth_sendTransaction',
+					params: [rawTransaction],
+				});
+			resolve(txAHash);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function withdrawXTimeStake(value) {
+	let amount = web3.utils.toWei(value);
+	let withdraw = STAKE_XTIME_CONTRACT.methods.withdraw(amount);
+
+	let rawTransaction = {
+		"from": CURRENT_ADDRESS,
+		"to": STAKE_XTIME_CONTRACT_ADDRESS,
+		"value": web3.utils.toHex(0),
+		"data": withdraw.encodeABI()
+	};
+
+	return new Promise(async function (resolve, reject) {
+		try {
+			const txHash = await window.ethereum
+				.request({
+					method: 'eth_sendTransaction',
+					params: [rawTransaction],
+				});
+			resolve(txHash);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
