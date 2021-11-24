@@ -105,9 +105,9 @@ a:focus {
 }
 
 .coming-soon {
-    text-align: center;
+	text-align: center;
 	color: #fff;
-    margin: 0 auto 50px;
+	margin: 0 auto 50px;
 }
 
 .coming-soon p {
@@ -597,7 +597,8 @@ input[type="number"] {
 	font-size: 14px;
 }
 
-#stake-earned-result {
+#stake-earned-result,
+#stake-xtime-earned-result {
 	margin: 0;
 	font-size: 18px;
 	color: rgb(29, 162, 231);
@@ -608,10 +609,11 @@ input[type="number"] {
 	font-size: 10px;
 }
 
-#stake-staked-result {
+#stake-staked-result,
+#stake-xtime-staked-result {
 	margin: 0;
 	font-size: 20px;
-    color: rgb(29, 162, 231);
+	color: rgb(29, 162, 231);
 }
 
 .stake-staked-label {
@@ -690,7 +692,9 @@ input[type="number"] {
 }
 
 #btn-reduce-stake,
-#btn-increase-stake {
+#btn-increase-stake,
+#btn-reduce-stake-xtime,
+#btn-increase-stake-xtime {
 	width: 31px;
 }
 
