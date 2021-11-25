@@ -707,10 +707,26 @@ input[type="number"] {
 #confirm-change-stake {
 	width: 100%;
 }
-.stake-old-text {
-	margin: 0;
+
+.stake-detail.with-tag {
+	overflow: hidden;
+	position: relative;
+}
+
+.with-tag .tag {
 	color: white;
-	line-height: 40px;
+	top: 17px;
+	width: 137px;
+	right: -38px;
+	text-align: center;
+	font-weight: bold;
+	background-color: #0c60ee;
+	position: absolute;
+	transform:rotate(45deg);
+}
+
+.tag.new {
+	color: #FDBE33;
 }
 /***** Media Queries *****/
 @media (min-width: 768px) and (max-width: 979px) {
