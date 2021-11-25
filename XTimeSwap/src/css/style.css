@@ -707,7 +707,11 @@ input[type="number"] {
 #confirm-change-stake {
 	width: 100%;
 }
-
+.stake-old-text {
+	margin: 0;
+	color: white;
+	line-height: 40px;
+}
 /***** Media Queries *****/
 @media (min-width: 768px) and (max-width: 979px) {
 	.logo h1 {
