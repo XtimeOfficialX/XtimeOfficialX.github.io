@@ -4,9 +4,11 @@ const PAIR_CONTRACT_ADDRESS = "0xbaBd4F4FC5667F8cac87DC6499F3e8f38f13B57A";
 const ROUTER_CONTRACT_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
 const STAKE_CONTRACT_ADDRESS = "0xF8f10A45379E70103B2E54090Aa7aAe83F575B01";
 const STAKE_XTIME_CONTRACT_ADDRESS = "0x002D4C9667f517Ac27f0F32579152D7C87108CCf";
+const NEW_STAKE_XTIME_CONTRACT_ADDRESS = "0x22a2de195fe92542acE7b00332B43BB82bDEB8Bb";
 
 let STAKE_CONTRACT;
 let STAKE_XTIME_CONTRACT;
+let NEW_STAKE_XTIME_CONTRACT;
 let PAIR_CONTRACT;
 let ROUTER_CONTRACT;
 let XTIME_CONTRACT;
@@ -126,6 +128,7 @@ function initContract() {
 	WBNB_CONTRACT = new web3.eth.Contract(WBNBABI, WBNB_CONTRACT_ADDRESS);
 	STAKE_CONTRACT = new web3.eth.Contract(STAKE_ABI, STAKE_CONTRACT_ADDRESS);
 	STAKE_XTIME_CONTRACT = new web3.eth.Contract(STAKE_XTIME_ABI, STAKE_XTIME_CONTRACT_ADDRESS);
+	NEW_STAKE_XTIME_CONTRACT = new web3.eth.Contract(STAKE_XTIME_ABI, NEW_STAKE_XTIME_CONTRACT_ADDRESS);
 }
 
 function listenEvent() {
@@ -630,3 +633,97 @@ function withdrawXTimeStake(value) {
 	})
 }
 
+// new stake time
+function getNewXTimeStakeAllowance(owner, spender) {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let allowance = XTIME_CONTRACT.methods.allowance(owner, spender).call();
+			resolve(allowance);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function getNewXTimeStakePendingReward(address) {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let info = NEW_STAKE_XTIME_CONTRACT.methods.pendingReward(address).call();
+			resolve(info);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function getNewXTimeStakeTotal() {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let balance = XTIME_CONTRACT.methods.balanceOf(NEW_STAKE_XTIME_CONTRACT_ADDRESS).call()
+			resolve(balance);
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
+
+function getNewXTimeSTakeUserInfo(address) {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let info = NEW_STAKE_XTIME_CONTRACT.methods.userInfo(address).call();
+			resolve(info);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function depositNewXTimeStake(value) {
+	let amount = web3.utils.toWei(value);
+	let deposit = NEW_STAKE_XTIME_CONTRACT.methods.deposit(amount);
+
+	let rawTransaction = {
+		"from": CURRENT_ADDRESS,
+		"to": NEW_STAKE_XTIME_CONTRACT_ADDRESS,
+		"value": web3.utils.toHex(0),
+		"data": deposit.encodeABI()
+	};
+
+	return new Promise(async function (resolve, reject) {
+		try {
+			const txAHash = await window.ethereum
+				.request({
+					method: 'eth_sendTransaction',
+					params: [rawTransaction],
+				});
+			resolve(txAHash);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function withdrawNewXTimeStake(value) {
+	let amount = web3.utils.toWei(value);
+	let withdraw = NEW_STAKE_XTIME_CONTRACT.methods.withdraw(amount);
+
+	let rawTransaction = {
+		"from": CURRENT_ADDRESS,
+		"to": NEW_STAKE_XTIME_CONTRACT_ADDRESS,
+		"value": web3.utils.toHex(0),
+		"data": withdraw.encodeABI()
+	};
+
+	return new Promise(async function (resolve, reject) {
+		try {
+			const txHash = await window.ethereum
+				.request({
+					method: 'eth_sendTransaction',
+					params: [rawTransaction],
+				});
+			resolve(txHash);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}

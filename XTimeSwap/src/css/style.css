@@ -533,6 +533,11 @@ input[type="number"] {
 	box-shadow: rgb(0 146 224) 0 0 1.5rem, rgb(0 146 224 / 70%) 0 0 1rem 0 inset;
 }
 
+.old .stake-detail {
+    border: 1px solid rgb(255, 0, 0);
+    box-shadow: rgb(255, 0, 0) 0 0 1.5rem, rgba(255, 0, 0, 0.7) 0 0 1rem 0 inset;
+}
+
 .stake-detail-item {
 	height: 60px;
 	padding: 10px 0;
@@ -563,12 +568,13 @@ input[type="number"] {
 	font-size: 14px;
 	line-height: 40px;
 	cursor: pointer;
+    padding-right: 40px;
 }
 
 .stake-detail-info {
 	display: none;
 	justify-content: space-between;
-	width: 530px;
+	width: 720px;
 	margin: 10px auto;
 }
 
@@ -580,7 +586,7 @@ input[type="number"] {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	width: 250px;
+	width: 350px;
 	height: 60px;
 	padding: 0 10px;
 	color: white;
@@ -598,7 +604,8 @@ input[type="number"] {
 }
 
 #stake-earned-result,
-#stake-xtime-earned-result {
+#stake-xtime-earned-result,
+#new-stake-xtime-earned-result {
 	margin: 0;
 	font-size: 18px;
 	color: rgb(29, 162, 231);
@@ -610,7 +617,8 @@ input[type="number"] {
 }
 
 #stake-staked-result,
-#stake-xtime-staked-result {
+#stake-xtime-staked-result,
+#new-stake-xtime-staked-result {
 	margin: 0;
 	font-size: 20px;
 	color: rgb(29, 162, 231);
