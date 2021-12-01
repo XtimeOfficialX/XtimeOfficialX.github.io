@@ -533,6 +533,11 @@ input[type="number"] {
 	box-shadow: rgb(0 146 224) 0 0 1.5rem, rgb(0 146 224 / 70%) 0 0 1rem 0 inset;
 }
 
+.old .stake-detail {
+    border: 1px solid rgb(255, 0, 0);
+    box-shadow: rgb(255, 0, 0) 0 0 1.5rem, rgba(255, 0, 0, 0.7) 0 0 1rem 0 inset;
+}
+
 .stake-detail-item {
 	height: 60px;
 	padding: 10px 0;
@@ -563,6 +568,7 @@ input[type="number"] {
 	font-size: 14px;
 	line-height: 40px;
 	cursor: pointer;
+    padding-right: 40px;
 }
 
 .stake-detail-info {
