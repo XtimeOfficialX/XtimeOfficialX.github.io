@@ -403,13 +403,35 @@
 								<!--</div>-->
 								<div class="stake-detail-item">
 									<p class="detail-item-title color-white">Total Staked XTime</p>
-									<p class="detail-item-info color-white" >Coming soon</p>
+									<p class="detail-item-info color-white" id="new-xtime-stake-total">Coming soon</p>
 								</div>
 								<div class="stake-detail-item detail-btn">
 									Details
 								</div>
 								<div class="tag new">
 									New
+								</div>
+							</div>
+							<div class="stake-detail-info">
+								<div class="stake-detail-info-item">
+									<div>
+										<p class="stake-earned-label">BTC Earned:</p>
+										<p id="new-stake-xtime-earned-result">0</p>
+										<!--<p id="stake-earned-money">0.00~ USD</p>-->
+									</div>
+									<button class="btn btn-primary btn-sm" id="new-confirm-xtime-harvest">Harvest</button>
+								</div>
+								<div class="stake-detail-info-item">
+									<div>
+										<p class="stake-staked-label">XTime Staked</p>
+										<p id="new-stake-xtime-staked-result">0</p>
+									</div>
+									<div>
+										<button class="btn btn-primary btn-sm" id="new-btn-enable-stake-xtime">Enable
+										</button>
+										<button class="btn btn-primary btn-sm" id="new-btn-reduce-stake-xtime">-</button>
+										<button class="btn btn-primary btn-sm" id="new-btn-increase-stake-xtime">+</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -533,6 +555,44 @@
 
 							<div style="padding: 30px 15px 30px 15px">
 								<button class="btn btn-lg btn-primary" disabled id="confirm-change-xtime-stake">Confirm
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="modal" id="new-change-xtime-stake" data-backdrop="static" data-keyboard="false" tabindex="-1"
+			 aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="new-change-xtime-stake-title">Change Stake</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="swap-input">
+							<p class="input-label">Stake</p>
+							<p class="input-label float-right hide" id="new-balance-change-xtime-stake">Balance:
+								0.165578</p>
+							<div class="input-body">
+								<input class="token-amount-input" inputmode="decimal"
+									   autocorrect="off" type="number" pattern="^[0-9]*[.,]?[0-9]*$"
+									   placeholder="0.0" minlength="1" maxlength="79" id="new-input-change-xtime-stake">
+							</div>
+							<div class="form-item change-stake-buttons">
+								<button class="btn-percent" id="new-change-xtime-stake-btn-percent-25">25%</button>
+								<button class="btn-percent" id="new-change-xtime-stake-btn-percent-50">50%</button>
+								<button class="btn-percent" id="new-change-xtime-stake-btn-percent-75">75%</button>
+								<button class="btn-percent" id="new-change-xtime-stake-btn-percent-100">100%</button>
+							</div>
+
+							<div style="padding: 30px 15px 30px 15px">
+								<button class="btn btn-lg btn-primary" disabled id="new-confirm-change-xtime-stake">Confirm
 								</button>
 							</div>
 						</div>
