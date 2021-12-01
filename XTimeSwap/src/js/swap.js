@@ -594,7 +594,7 @@ function connectedWallet(web3) {
 		showXTimeStakeBalance(XTIME_STAKE_BALANCE);
 
 		let pending_reward = web3.utils.toBN(result[3]);
-		$("#stake-xtime-earned-result").html(bnToDisplayString(pending_reward));
+		$("#stake-xtime-earned-result").html(bnToDisplayString(pending_reward, 17));
 	});
 
 	Promise.all([
@@ -613,7 +613,7 @@ function connectedWallet(web3) {
 		showNewXTimeStakeBalance(NEW_XTIME_STAKE_BALANCE);
 
 		let pending_reward = web3.utils.toBN(result[3]);
-		$("#new-stake-xtime-earned-result").html(bnToDisplayString(pending_reward));
+		$("#new-stake-xtime-earned-result").html(bnToDisplayString(pending_reward, 17));
 
 	})
 
@@ -629,7 +629,7 @@ function connectedWallet(web3) {
 
 	getStakePendingReward(CURRENT_ADDRESS).then((result) => {
 		let pending_reward = web3.utils.fromWei(result);
-		$("#stake-earned-result").html(parseFloat(pending_reward).toFixed(10));
+		$("#stake-earned-result").html(parseFloat(pending_reward).toFixed(17));
 	});
 
 	listenEvent();
@@ -940,6 +940,6 @@ function settingPercentChange() {
 }
 
 function bnToDisplayString(value_bn, length) {
-	length = length | 6;
+	length = length ? length : 6;
 	return parseFloat(Web3.utils.fromWei(value_bn.toString())).toFixed(length)
 }

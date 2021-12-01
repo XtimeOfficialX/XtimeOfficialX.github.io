@@ -568,7 +568,7 @@ input[type="number"] {
 .stake-detail-info {
 	display: none;
 	justify-content: space-between;
-	width: 530px;
+	width: 720px;
 	margin: 10px auto;
 }
 
@@ -580,7 +580,7 @@ input[type="number"] {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	width: 250px;
+	width: 350px;
 	height: 60px;
 	padding: 0 10px;
 	color: white;
