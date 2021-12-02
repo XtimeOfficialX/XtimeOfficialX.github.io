@@ -562,7 +562,7 @@ function connectedWallet(web3) {
 		getLiquidityTotalSupply(),
 		getLiquidityBalance(CURRENT_ADDRESS),
 		getPairReserves(),
-		getStakeTotal()
+		getStakeTotal(),
 	]).then(result => {
 		LIQUIDITY_TOTAL = Web3.utils.fromWei(result[0]);
 		LIQUIDITY_BALANCE = Web3.utils.fromWei(result[1]);
@@ -615,6 +615,54 @@ function connectedWallet(web3) {
 		let pending_reward = web3.utils.toBN(result[3]);
 		$("#new-stake-xtime-earned-result").html(bnToDisplayString(pending_reward, 17));
 
+	});
+
+	Promise.all([
+		getPairReserves(),
+		getLiquidityTotalSupply(),
+		getStakeTotal(),
+		getNewXTimeStakeTotal(),
+		getXTimeStakeTotal(),
+		getStakePairPerBlockReward(),
+		getNewStakePerBlockReward(),
+		getOldStakePerBlockReward(),
+		getXTimeToWBNBPrice(),
+		getBTCBToWBNBPrice(),
+	]).then(result => {
+		let pair_reserves = [
+			Web3.utils.toBN(result[0].reserve0), // bnb
+			Web3.utils.toBN(result[0].reserve1), // xtime
+		];
+		let liquidity_total = Web3.utils.toBN(result[1]);
+		let stake_pair_total = Web3.utils.toBN(result[2]);
+		let stake_new_xtime_total = Web3.utils.toBN(result[3]);
+		let stake_old_xtime_total = Web3.utils.toBN(result[4]);
+
+		let stake_pair_per_block_reward = Web3.utils.toBN(result[5]);
+		let stake_new_xtime_per_block_reward = Web3.utils.toBN(result[6]);
+		let stake_old_xtime_per_block_reward = Web3.utils.toBN(result[7]);
+
+		let xtime_price = Web3.utils.toBN(Web3.utils.toWei(XTIME_PRICE));
+
+		let stake_pair_reward_total = ONE_YEAR_BLOCK_COUNT.mul(stake_pair_per_block_reward).mul(BTCB_PRICE);
+		let stake_new_xtime_reward_total = ONE_YEAR_BLOCK_COUNT.mul(stake_new_xtime_per_block_reward).mul(BTCB_PRICE);
+		let stake_old_xtime_reward_total = ONE_YEAR_BLOCK_COUNT.mul(stake_old_xtime_per_block_reward).mul(BTCB_PRICE);
+
+		let stake_pair_total_bnb = pair_reserves[0].mul(stake_pair_total).div(liquidity_total).mul(Web3.utils.toBN(2));
+		let stake_new_xtime_total_bnb = (stake_new_xtime_total).div(xtime_price);
+		let stake_old_xtime_total_bnb = (stake_old_xtime_total).div(xtime_price);
+
+		let stake_pair_arp = stake_pair_reward_total.div(stake_pair_total_bnb).mul(Web3.utils.toBN(100));
+		let stake_new_xtime_arp = stake_new_xtime_reward_total.div(stake_new_xtime_total_bnb).mul(Web3.utils.toBN(100));
+		let stake_old_xtime_arp = stake_old_xtime_reward_total.div(stake_old_xtime_total_bnb).mul(Web3.utils.toBN(100));
+
+		let stake_pair_arp_string = parseFloat(Web3.utils.fromWei(stake_pair_arp)).toFixed(3) + "%";
+		let stake_new_xtime_arp_string = parseFloat(Web3.utils.fromWei(Math.floor(Web3.utils.fromWei(stake_new_xtime_arp)).toString())).toFixed(8) + "%";
+		let stake_old_xtime_arp_string = parseFloat(Web3.utils.fromWei(Math.floor(Web3.utils.fromWei(stake_old_xtime_arp)).toString())).toFixed(8) + "%";
+
+		$("#stake-pair-arp").html(stake_pair_arp_string);
+		$("#stake-new-xtime-arp").html(stake_new_xtime_arp_string);
+		$("#stake-old-xtime-arp").html(stake_old_xtime_arp_string);
 	})
 
 	getPairAllowance(CURRENT_ADDRESS, STAKE_CONTRACT_ADDRESS).then((result) => {
@@ -634,7 +682,6 @@ function connectedWallet(web3) {
 
 	listenEvent();
 
-	getXTimeToWBNBPrice();
 	setInterval(getXTimeToWBNBPrice, 5000)
 	connectWalletSuccess()
 }

@@ -5,6 +5,7 @@ const ROUTER_CONTRACT_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
 const STAKE_CONTRACT_ADDRESS = "0xF8f10A45379E70103B2E54090Aa7aAe83F575B01";
 const STAKE_XTIME_CONTRACT_ADDRESS = "0x002D4C9667f517Ac27f0F32579152D7C87108CCf";
 const NEW_STAKE_XTIME_CONTRACT_ADDRESS = "0x22a2de195fe92542acE7b00332B43BB82bDEB8Bb";
+const BTCB_CONTRACT_ADDRESS = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c";
 
 let STAKE_CONTRACT;
 let STAKE_XTIME_CONTRACT;
@@ -14,7 +15,12 @@ let ROUTER_CONTRACT;
 let XTIME_CONTRACT;
 let WBNB_CONTRACT;
 let XTIME_PRICE;
+let BTCB_PRICE;
 let UINT_MAX = "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff";
+
+let PRODUCE_BLOCK_TIME = 3;
+
+let ONE_YEAR_BLOCK_COUNT = Web3.utils.toBN(Math.floor(86400 / PRODUCE_BLOCK_TIME) * 365);
 
 function connectWallet() {
 	return new Promise(async function (resolve, reject) {
@@ -151,8 +157,15 @@ function listenEvent() {
 }
 
 function getXTimeToWBNBPrice() {
-	const oneWBNB = Web3.utils.toWei("1");
-	ROUTER_CONTRACT.methods.getAmountsOut(oneWBNB, [WBNB_CONTRACT_ADDRESS, XTIME_CONTRACT_ADDRESS]).call().then(result => XTIME_PRICE = Web3.utils.fromWei(result[1]));
+	return new Promise(function (resolve, reject) {
+		const oneWBNB = Web3.utils.toWei("1");
+		ROUTER_CONTRACT.methods.getAmountsOut(oneWBNB, [WBNB_CONTRACT_ADDRESS, XTIME_CONTRACT_ADDRESS]).call().then(result => {
+			XTIME_PRICE = Web3.utils.fromWei(result[1])
+			resolve()
+		}).catch(error => {
+			reject(error);
+		});
+	})
 }
 
 async function swapBNBToXTime() {
@@ -725,5 +738,52 @@ function withdrawNewXTimeStake(value) {
 		} catch (error) {
 			reject(error);
 		}
+	})
+}
+
+// get stake per block reward
+function getStakePairPerBlockReward() {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let info = STAKE_CONTRACT.methods.rewardPerBlock().call();
+			resolve(info);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function getOldStakePerBlockReward() {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let info = STAKE_XTIME_CONTRACT.methods.rewardPerBlock().call();
+			resolve(info);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function getNewStakePerBlockReward() {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let info = NEW_STAKE_XTIME_CONTRACT.methods.rewardPerBlock().call();
+			resolve(info);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+// get btc to bnb price
+function getBTCBToWBNBPrice() {
+	return new Promise( function (resolve, reject) {
+		const oneBTCB = Web3.utils.toWei("1");
+		ROUTER_CONTRACT.methods.getAmountsOut(oneBTCB, [BTCB_CONTRACT_ADDRESS, WBNB_CONTRACT_ADDRESS]).call().then(result => {
+			BTCB_PRICE = new Web3.utils.BN(result[1]);
+			resolve();
+		}).catch(error => {
+			reject(error);
+		});
 	})
 }
