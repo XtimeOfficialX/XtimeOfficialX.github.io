@@ -29,6 +29,11 @@ let NEW_XTIME_STAKE_BALANCE = "0";
 let NEW_XTIME_STAKE_CHANGE_VALUE = 0;
 let NEW_XTIME_STAKE_TOTAL = "0";
 
+let SUPER_XTIME_STAKE_ALLOWANCE = "0";
+let SUPER_XTIME_STAKE_BALANCE = "0";
+let SUPER_XTIME_STAKE_CHANGE_VALUE = 0;
+let SUPER_XTIME_STAKE_TOTAL = "0";
+
 function bindBtnEvents() {
 	$("#btn-swap").click(function () {
 		checkSwapInputValue();
@@ -63,6 +68,8 @@ function bindBtnEvents() {
 	handleStakeXTimeInputEvent();
 
 	handleNewStakeXTimeInputEvent();
+
+	handleSuperStakeXTimeInputEvent();
 
 	// confirm swap
 	$("#btn-confirm-swap").click(function () {
@@ -127,6 +134,15 @@ function bindBtnEvents() {
 	$("#new-btn-enable-stake-xtime").click(function () {
 		enableXTimeStake(NEW_STAKE_XTIME_CONTRACT_ADDRESS).then(() => {
 			getNewXTimeStakeAllowance(CURRENT_ADDRESS, NEW_STAKE_XTIME_CONTRACT_ADDRESS).then((result) => {
+				console.log(result);
+			})
+		})
+	})
+
+	// enable super xtime stake
+	$("#super-btn-enable-stake-xtime").click(function () {
+		enableXTimeStake(SUPER_STAKE_XTIME_CONTRACT_ADDRESS).then(() => {
+			getSuperXTimeStakeAllowance(CURRENT_ADDRESS, SUPER_STAKE_XTIME_CONTRACT_ADDRESS).then((result) => {
 				console.log(result);
 			})
 		})
@@ -201,6 +217,29 @@ function bindBtnEvents() {
 		}
 	})
 
+	// confirm change super xtime stake
+	$("#super-confirm-change-xtime-stake").click(function () {
+		if (STAKE_CHANGE_WAY === 1) {
+			depositSuperXTimeStake(SUPER_XTIME_STAKE_CHANGE_VALUE.toString()).then((result) => {
+				console.log(result);
+				showSuccessInfo("Deposit Success!", "You transaction is on the way");
+				$("#super-change-xtime-stake").modal('toggle');
+			}).catch((error) => {
+				console.log(error);
+				showAlert("Deposit Failed!", error.message)
+			})
+		} else {
+			withdrawSuperXTimeStake(SUPER_XTIME_STAKE_CHANGE_VALUE.toString()).then((result) => {
+				console.log(result);
+				showSuccessInfo("Withdraw Success!", "You transaction is on the way");
+				$("#super-change-xtime-stake").modal('toggle');
+			}).catch((error) => {
+				console.log(error);
+				showAlert("Withdraw Failed!", error.message)
+			})
+		}
+	})
+
 	// confirm harvest
 	$("#confirm-harvest").click(function () {
 		depositStake("0").then((result) => {
@@ -226,6 +265,17 @@ function bindBtnEvents() {
 	// confirm harvest new xtime
 	$("#new-confirm-xtime-harvest").click(function () {
 		depositNewXTimeStake("0").then((result) => {
+			console.log(result);
+			showSuccessInfo("Harvest Success!", "You transaction is on the way");
+		}).catch((error) => {
+			console.log(error);
+			showAlert("Harvest Failed!", error.message);
+		})
+	})
+
+	// confirm harvest super xtime
+	$("#super-confirm-xtime-harvest").click(function () {
+		depositSuperXTimeStake("0").then((result) => {
 			console.log(result);
 			showSuccessInfo("Harvest Success!", "You transaction is on the way");
 		}).catch((error) => {
@@ -444,6 +494,54 @@ function handleStakeInputEvent() {
 	})
 }
 
+function handleSuperStakeXTimeInputEvent() {
+	// increase stake
+	$("#super-btn-increase-stake-xtime").click(function () {
+		STAKE_CHANGE_WAY = 1;
+		$("#super-change-xtime-stake-title").html("Stake XTime");
+		$("#super-balance-change-xtime-stake").html(XTIME_BALANCE);
+		$("#super-change-xtime-stake").modal('toggle');
+	});
+
+	// reduce stake
+	$("#super-btn-reduce-stake-xtime").click(function () {
+		STAKE_CHANGE_WAY = 2;
+		$("#super-change-xtime-stake-title").html("Unstake XTime");
+		$("#super-balance-change-xtime-stake").html(bnToDisplayString(SUPER_XTIME_STAKE_BALANCE));
+		$("#super-change-xtime-stake").modal('toggle')
+	});
+
+	// percent input
+	$("#super-change-xtime-stake-btn-percent-25").click(function () {
+		SUPER_XTIME_STAKE_CHANGE_VALUE = calculateSuperXTimeStakeValue(0.25);
+		$("#super-input-change-xtime-stake").val(SUPER_XTIME_STAKE_CHANGE_VALUE);
+		checkSuperXTimeStakeInputValue(SUPER_XTIME_STAKE_CHANGE_VALUE);
+	})
+
+	$("#super-change-xtime-stake-btn-percent-50").click(function () {
+		SUPER_XTIME_STAKE_CHANGE_VALUE = calculateSuperXTimeStakeValue(0.5);
+		$("#super-input-change-xtime-stake").val(SUPER_XTIME_STAKE_CHANGE_VALUE);
+		checkSuperXTimeStakeInputValue(SUPER_XTIME_STAKE_CHANGE_VALUE);
+	})
+
+	$("#super-change-xtime-stake-btn-percent-75").click(function () {
+		SUPER_XTIME_STAKE_CHANGE_VALUE = calculateSuperXTimeStakeValue(0.75);
+		$("#super-input-change-xtime-stake").val(SUPER_XTIME_STAKE_CHANGE_VALUE);
+		checkSuperXTimeStakeInputValue(SUPER_XTIME_STAKE_CHANGE_VALUE);
+	})
+
+	$("#super-change-xtime-stake-btn-percent-100").click(function () {
+		SUPER_XTIME_STAKE_CHANGE_VALUE = calculateSuperXTimeStakeValue(1);
+		$("#super-input-change-xtime-stake").val(SUPER_XTIME_STAKE_CHANGE_VALUE);
+		checkSuperXTimeStakeInputValue(SUPER_XTIME_STAKE_CHANGE_VALUE);
+	})
+
+	$("#super-input-change-xtime-stake").on("input", function () {
+		SUPER_XTIME_STAKE_CHANGE_VALUE = $(this).val();
+		checkSuperXTimeStakeInputValue(SUPER_XTIME_STAKE_CHANGE_VALUE);
+	})
+}
+
 function handleNewStakeXTimeInputEvent() {
 	// increase stake
 	$("#new-btn-increase-stake-xtime").click(function () {
@@ -612,57 +710,28 @@ function connectedWallet(web3) {
 		NEW_XTIME_STAKE_BALANCE = Web3.utils.toBN(result[2].amount);
 		showNewXTimeStakeBalance(NEW_XTIME_STAKE_BALANCE);
 
-		let pending_reward = web3.utils.toBN(result[3]);
+		let pending_reward = Web3.utils.toBN(result[3]);
 		$("#new-stake-xtime-earned-result").html(bnToDisplayString(pending_reward, 17));
 
 	});
 
 	Promise.all([
-		getPairReserves(),
-		getLiquidityTotalSupply(),
-		getStakeTotal(),
-		getNewXTimeStakeTotal(),
-		getXTimeStakeTotal(),
-		getStakePairPerBlockReward(),
-		getNewStakePerBlockReward(),
-		getOldStakePerBlockReward(),
-		getXTimeToWBNBPrice(),
-		getBTCBToWBNBPrice(),
+		getSuperXTimeStakeTotal(),
+		getSuperXTimeStakeAllowance(CURRENT_ADDRESS, SUPER_STAKE_XTIME_CONTRACT_ADDRESS),
+		getSuperXTimeSTakeUserInfo(CURRENT_ADDRESS),
+		getSuperXTimeStakePendingReward(CURRENT_ADDRESS),
 	]).then(result => {
-		let pair_reserves = [
-			Web3.utils.toBN(result[0].reserve0), // bnb
-			Web3.utils.toBN(result[0].reserve1), // xtime
-		];
-		let liquidity_total = Web3.utils.toBN(result[1]);
-		let stake_pair_total = Web3.utils.toBN(result[2]);
-		let stake_new_xtime_total = Web3.utils.toBN(result[3]);
-		let stake_old_xtime_total = Web3.utils.toBN(result[4]);
+		SUPER_XTIME_STAKE_TOTAL = Web3.utils.toBN(result[0]);
+		$("#super-xtime-stake-total").html(bnToDisplayString(SUPER_XTIME_STAKE_TOTAL));
 
-		let stake_pair_per_block_reward = Web3.utils.toBN(result[5]);
-		let stake_new_xtime_per_block_reward = Web3.utils.toBN(result[6]);
-		let stake_old_xtime_per_block_reward = Web3.utils.toBN(result[7]);
+		SUPER_XTIME_STAKE_ALLOWANCE = Web3.utils.toBN(result[1]);
+		showSuperXTimeStakeButtons();
 
-		let xtime_price = Web3.utils.toBN(Web3.utils.toWei(XTIME_PRICE));
+		SUPER_XTIME_STAKE_BALANCE = Web3.utils.toBN(result[2].amount);
+		showSuperXTimeStakeBalance(SUPER_XTIME_STAKE_BALANCE);
 
-		let stake_pair_reward_total = ONE_YEAR_BLOCK_COUNT.mul(stake_pair_per_block_reward).mul(BTCB_PRICE);
-		let stake_new_xtime_reward_total = ONE_YEAR_BLOCK_COUNT.mul(stake_new_xtime_per_block_reward).mul(BTCB_PRICE);
-		let stake_old_xtime_reward_total = ONE_YEAR_BLOCK_COUNT.mul(stake_old_xtime_per_block_reward).mul(BTCB_PRICE);
-
-		let stake_pair_total_bnb = pair_reserves[0].mul(stake_pair_total).div(liquidity_total).mul(Web3.utils.toBN(2));
-		let stake_new_xtime_total_bnb = (stake_new_xtime_total).div(xtime_price);
-		let stake_old_xtime_total_bnb = (stake_old_xtime_total).div(xtime_price);
-
-		let stake_pair_arp = stake_pair_reward_total.div(stake_pair_total_bnb).mul(Web3.utils.toBN(100));
-		let stake_new_xtime_arp = stake_new_xtime_reward_total.div(stake_new_xtime_total_bnb).mul(Web3.utils.toBN(100));
-		let stake_old_xtime_arp = stake_old_xtime_reward_total.div(stake_old_xtime_total_bnb).mul(Web3.utils.toBN(100));
-
-		let stake_pair_arp_string = parseFloat(Web3.utils.fromWei(stake_pair_arp)).toFixed(3) + "%";
-		let stake_new_xtime_arp_string = parseFloat(Web3.utils.fromWei(Math.floor(Web3.utils.fromWei(stake_new_xtime_arp)).toString())).toFixed(8) + "%";
-		let stake_old_xtime_arp_string = parseFloat(Web3.utils.fromWei(Math.floor(Web3.utils.fromWei(stake_old_xtime_arp)).toString())).toFixed(8) + "%";
-
-		$("#stake-pair-arp").html(stake_pair_arp_string);
-		$("#stake-new-xtime-arp").html(stake_new_xtime_arp_string);
-		$("#stake-old-xtime-arp").html(stake_old_xtime_arp_string);
+		let pending_reward = Web3.utils.toBN(result[3]);
+		$("#super-stake-xtime-earned-result").html(bnToDisplayString(pending_reward, 17));
 	})
 
 	getPairAllowance(CURRENT_ADDRESS, STAKE_CONTRACT_ADDRESS).then((result) => {
@@ -681,6 +750,8 @@ function connectedWallet(web3) {
 	});
 
 	listenEvent();
+
+	calculateARP();
 
 	setInterval(getXTimeToWBNBPrice, 5000)
 	connectWalletSuccess()
@@ -708,6 +779,68 @@ function showLiquidityPay() {
 	} else {
 		$("#btn-confirm-remove-liquidity").attr("disabled", true);
 	}
+}
+
+// 计算ARP
+function calculateARP() {
+	Promise.all([
+		getPairReserves(),
+		getLiquidityTotalSupply(),
+		getStakeTotal(),
+		getNewXTimeStakeTotal(),
+		getXTimeStakeTotal(),
+		getStakePairPerBlockReward(),
+		getNewStakePerBlockReward(),
+		getOldStakePerBlockReward(),
+		getStakePairPerBlockReward(),
+		getSuperXTimeStakeTotal(),
+		getXTimeToWBNBPrice(),
+		getBTCBToWBNBPrice(),
+	]).then(result => {
+		let pair_reserves = [
+			Web3.utils.toBN(result[0].reserve0), // bnb
+			Web3.utils.toBN(result[0].reserve1), // xtime
+		];
+		let liquidity_total = Web3.utils.toBN(result[1]);
+		let stake_pair_total = Web3.utils.toBN(result[2]);
+		let stake_new_xtime_total = Web3.utils.toBN(result[3]);
+		let stake_old_xtime_total = Web3.utils.toBN(result[4]);
+		let stake_super_xtime_total = Web3.utils.toBN(result[9]);
+
+		let stake_pair_per_block_reward = Web3.utils.toBN(result[5]);
+		let stake_new_xtime_per_block_reward = Web3.utils.toBN(result[6]);
+		let stake_old_xtime_per_block_reward = Web3.utils.toBN(result[7]);
+		let stake_super_xtime_per_block_reward = Web3.utils.toBN(result[8]);
+
+		let xtime_price = Web3.utils.toBN(Web3.utils.toWei(XTIME_PRICE));
+
+		let stake_pair_reward_total = ONE_YEAR_BLOCK_COUNT.mul(stake_pair_per_block_reward).mul(BTCB_PRICE);
+		let stake_new_xtime_reward_total = ONE_YEAR_BLOCK_COUNT.mul(stake_new_xtime_per_block_reward).mul(BTCB_PRICE);
+		let stake_old_xtime_reward_total = ONE_YEAR_BLOCK_COUNT.mul(stake_old_xtime_per_block_reward).mul(BTCB_PRICE);
+		let stake_super_xtime_reward_total = ONE_YEAR_BLOCK_COUNT.mul(stake_super_xtime_per_block_reward).mul(BTCB_PRICE);
+
+		let stake_pair_total_bnb = pair_reserves[0].mul(stake_pair_total).div(liquidity_total).mul(Web3.utils.toBN(2));
+		let stake_new_xtime_total_bnb = (stake_new_xtime_total).div(xtime_price);
+		let stake_old_xtime_total_bnb = (stake_old_xtime_total).div(xtime_price);
+		let stake_super_xtime_total_bnb = (stake_super_xtime_total).div(xtime_price);
+
+		let stake_pair_arp = stake_pair_reward_total.div(stake_pair_total_bnb).mul(Web3.utils.toBN(100));
+		let stake_new_xtime_arp = stake_new_xtime_reward_total.div(stake_new_xtime_total_bnb).mul(Web3.utils.toBN(100));
+		let stake_old_xtime_arp = stake_old_xtime_reward_total.div(stake_old_xtime_total_bnb).mul(Web3.utils.toBN(100));
+		let stake_super_xtime_arp = stake_super_xtime_reward_total.div(stake_super_xtime_total_bnb).mul(Web3.utils.toBN(100));
+
+		console.log(Web3.utils.fromWei(stake_super_xtime_arp.toString()).split(".")[0]);
+
+		let stake_pair_arp_string = parseFloat(Web3.utils.fromWei(stake_pair_arp)).toFixed(3) + "%";
+		let stake_new_xtime_arp_string = parseFloat(Web3.utils.fromWei(Math.floor(Web3.utils.fromWei(stake_new_xtime_arp)).toString())).toFixed(8) + "%";
+		let stake_old_xtime_arp_string = parseFloat(Web3.utils.fromWei(Math.floor(Web3.utils.fromWei(stake_old_xtime_arp)).toString())).toFixed(8) + "%";
+		let stake_super_xtime_arp_string = parseFloat(Web3.utils.fromWei(Web3.utils.fromWei(stake_super_xtime_arp).split(".")[0])).toFixed(8) + "%";
+
+		$("#stake-pair-arp").html(stake_pair_arp_string);
+		$("#stake-new-xtime-arp").html(stake_new_xtime_arp_string);
+		$("#stake-old-xtime-arp").html(stake_old_xtime_arp_string);
+		$("#stake-super-xtime-arp").html(stake_super_xtime_arp_string);
+	})
 }
 
 function calculateLiquidityInfo(percent) {
@@ -819,6 +952,18 @@ function showStakeButtons() {
 	}
 }
 
+function showSuperXTimeStakeButtons() {
+	if (SUPER_XTIME_STAKE_ALLOWANCE.gt(new web3.utils.BN("0"))) {
+		$("#super-btn-enable-stake-xtime").addClass("hide");
+		$("#super-btn-increase-stake-xtime").removeClass("hide");
+		$("#super-btn-reduce-stake-xtime").removeClass("hide");
+	} else {
+		$("#super-btn-enable-stake-xtime").removeClass("hide");
+		$("#super-btn-increase-stake-xtime").addClass("hide");
+		$("#super-btn-reduce-stake-xtime").addClass("hide");
+	}
+}
+
 function showNewXTimeStakeButtons() {
 	if (NEW_XTIME_STAKE_ALLOWANCE.gt(new web3.utils.BN("0"))) {
 		$("#new-btn-enable-stake-xtime").addClass("hide");
@@ -853,6 +998,10 @@ function showXTimeStakeBalance(value) {
 
 function showNewXTimeStakeBalance(value) {
 	$("#new-stake-xtime-staked-result").html(bnToDisplayString(value));
+}
+
+function showSuperXTimeStakeBalance(value) {
+	$("#super-stake-xtime-staked-result").html(bnToDisplayString(value));
 }
 
 function calculateStakeValue(percent) {
@@ -902,6 +1051,17 @@ function calculateNewXTimeStakeValue(percent) {
 	return result;
 }
 
+function calculateSuperXTimeStakeValue(percent) {
+	let result;
+
+	if (STAKE_CHANGE_WAY === 1) {
+		result = XTIME_BALANCE * percent;
+	} else {
+		result = Web3.utils.fromWei(SUPER_XTIME_STAKE_BALANCE.toString()) * percent;
+	}
+	return result;
+}
+
 function checkXTimeStakeInputValue(value) {
 	let wei_value = new web3.utils.BN(web3.utils.toWei(value.toString()));
 	let wei_liquidity_balance = new web3.utils.BN(web3.utils.toWei(XTIME_BALANCE));
@@ -913,6 +1073,20 @@ function checkXTimeStakeInputValue(value) {
 		$("#confirm-change-xtime-stake").attr("disabled", false);
 	} else {
 		$("#confirm-change-xtime-stake").attr("disabled", true);
+	}
+}
+
+function checkSuperXTimeStakeInputValue(value) {
+	let wei_value = new web3.utils.BN(web3.utils.toWei(value.toString()));
+	let wei_liquidity_balance = new web3.utils.BN(web3.utils.toWei(XTIME_BALANCE));
+	let wei_stake_balance = new web3.utils.BN(web3.utils.toWei(SUPER_XTIME_STAKE_BALANCE));
+
+	if (STAKE_CHANGE_WAY === 1 && wei_value.lte(wei_liquidity_balance)) {
+		$("#super-confirm-change-xtime-stake").attr("disabled", false);
+	} else if (STAKE_CHANGE_WAY === 2 && wei_value.lte(wei_stake_balance)) {
+		$("#super-confirm-change-xtime-stake").attr("disabled", false);
+	} else {
+		$("#super-confirm-change-xtime-stake").attr("disabled", true);
 	}
 }
 

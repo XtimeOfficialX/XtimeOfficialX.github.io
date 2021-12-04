@@ -5,11 +5,13 @@ const ROUTER_CONTRACT_ADDRESS = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
 const STAKE_CONTRACT_ADDRESS = "0xF8f10A45379E70103B2E54090Aa7aAe83F575B01";
 const STAKE_XTIME_CONTRACT_ADDRESS = "0x002D4C9667f517Ac27f0F32579152D7C87108CCf";
 const NEW_STAKE_XTIME_CONTRACT_ADDRESS = "0x22a2de195fe92542acE7b00332B43BB82bDEB8Bb";
+const SUPER_STAKE_XTIME_CONTRACT_ADDRESS = "0xc9cbfdD6611645769dE33a8591BBEE8E7217AC8a";
 const BTCB_CONTRACT_ADDRESS = "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c";
 
 let STAKE_CONTRACT;
 let STAKE_XTIME_CONTRACT;
 let NEW_STAKE_XTIME_CONTRACT;
+let SUPER_STAKE_XTIME_CONTRACT;
 let PAIR_CONTRACT;
 let ROUTER_CONTRACT;
 let XTIME_CONTRACT;
@@ -135,6 +137,7 @@ function initContract() {
 	STAKE_CONTRACT = new web3.eth.Contract(STAKE_ABI, STAKE_CONTRACT_ADDRESS);
 	STAKE_XTIME_CONTRACT = new web3.eth.Contract(STAKE_XTIME_ABI, STAKE_XTIME_CONTRACT_ADDRESS);
 	NEW_STAKE_XTIME_CONTRACT = new web3.eth.Contract(STAKE_XTIME_ABI, NEW_STAKE_XTIME_CONTRACT_ADDRESS);
+	SUPER_STAKE_XTIME_CONTRACT = new web3.eth.Contract(STAKE_XTIME_ABI, SUPER_STAKE_XTIME_CONTRACT_ADDRESS);
 }
 
 function listenEvent() {
@@ -741,6 +744,101 @@ function withdrawNewXTimeStake(value) {
 	})
 }
 
+// super stake time
+function getSuperXTimeStakeAllowance(owner, spender) {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let allowance = XTIME_CONTRACT.methods.allowance(owner, spender).call();
+			resolve(allowance);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function getSuperXTimeStakePendingReward(address) {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let info = SUPER_STAKE_XTIME_CONTRACT.methods.pendingReward(address).call();
+			resolve(info);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function getSuperXTimeStakeTotal() {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let balance = XTIME_CONTRACT.methods.balanceOf(SUPER_STAKE_XTIME_CONTRACT_ADDRESS).call()
+			resolve(balance);
+		} catch (error) {
+			reject(error)
+		}
+	})
+}
+
+function getSuperXTimeSTakeUserInfo(address) {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let info = SUPER_STAKE_XTIME_CONTRACT.methods.userInfo(address).call();
+			resolve(info);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function depositSuperXTimeStake(value) {
+	let amount = web3.utils.toWei(value);
+	let deposit = SUPER_STAKE_XTIME_CONTRACT.methods.deposit(amount);
+
+	let rawTransaction = {
+		"from": CURRENT_ADDRESS,
+		"to": SUPER_STAKE_XTIME_CONTRACT_ADDRESS,
+		"value": web3.utils.toHex(0),
+		"data": deposit.encodeABI()
+	};
+
+	return new Promise(async function (resolve, reject) {
+		try {
+			const txAHash = await window.ethereum
+				.request({
+					method: 'eth_sendTransaction',
+					params: [rawTransaction],
+				});
+			resolve(txAHash);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function withdrawSuperXTimeStake(value) {
+	let amount = web3.utils.toWei(value);
+	let withdraw = SUPER_STAKE_XTIME_CONTRACT.methods.withdraw(amount);
+
+	let rawTransaction = {
+		"from": CURRENT_ADDRESS,
+		"to": SUPER_STAKE_XTIME_CONTRACT_ADDRESS,
+		"value": web3.utils.toHex(0),
+		"data": withdraw.encodeABI()
+	};
+
+	return new Promise(async function (resolve, reject) {
+		try {
+			const txHash = await window.ethereum
+				.request({
+					method: 'eth_sendTransaction',
+					params: [rawTransaction],
+				});
+			resolve(txHash);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
 // get stake per block reward
 function getStakePairPerBlockReward() {
 	return new Promise(async function (resolve, reject) {
@@ -768,6 +866,17 @@ function getNewStakePerBlockReward() {
 	return new Promise(async function (resolve, reject) {
 		try {
 			let info = NEW_STAKE_XTIME_CONTRACT.methods.rewardPerBlock().call();
+			resolve(info);
+		} catch (error) {
+			reject(error);
+		}
+	})
+}
+
+function getSuperStakePerBlockReward() {
+	return new Promise(async function (resolve, reject) {
+		try {
+			let info = SUPER_STAKE_XTIME_CONTRACT.methods.rewardPerBlock().call();
 			resolve(info);
 		} catch (error) {
 			reject(error);
