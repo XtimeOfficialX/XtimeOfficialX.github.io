@@ -506,6 +506,10 @@ input[type="number"] {
     filter: drop-shadow(white 3px 1px 1px);
 }
 
+.sub-title {
+    font-size: 24px;
+}
+
 .stake-container {
     width: 800px;
     border: 0 solid darkgrey;
