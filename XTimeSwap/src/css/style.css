@@ -744,6 +744,12 @@ input[type="number"] {
     color: #FDBE33;
 }
 
+.link-bit-city {
+    text-align: center;
+    font-size: 30px;
+    color: wheat;
+}
+
 /***** Media Queries *****/
 @media (min-width: 768px) and (max-width: 979px) {
     .logo h1 {
